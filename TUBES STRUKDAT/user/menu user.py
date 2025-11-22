@@ -9,11 +9,12 @@ class Song:
         self.title = title
         self.year = year
         self.duration = duration
-        self.play_count = 0  # Atribut yang bakal berubah kalau diputar User
+        self.play_count = 0  # Atribut yang bakal berubah kalau diputar User/nnti kalau lagu nya baru itu nilainya 0 karena blm pernah di putarz
         self.artist_name = "" # Helper biar tau ini lagu siapa
 
-#wadaha artis
+#wadah artis
 class Artist:
+    #
     def __init__(self, name, genre, verified=False):
         self.name = name
         self.genre = genre
