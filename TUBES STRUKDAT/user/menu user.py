@@ -1,40 +1,11 @@
 import os
 import time
+# --- PENTING: MENGAMBIL DATA DARI FOLDER DATABASE ---
+from database.data_store import users_list, artists_list
+from database.models import User
 
-# 1. STRUKTUR DATA 
-
-#wadah lagu
-class Song:
-    def __init__(self, title, year, duration):
-        self.title = title
-        self.year = year
-        self.duration = duration
-        self.play_count = 0  # Atribut yang bakal berubah kalau diputar User/nnti kalau lagu nya baru itu nilainya 0 karena blm pernah di putarz
-        self.artist_name = "" # Helper biar tau ini lagu siapa
-
-#wadah artis
-class Artist:
-    #
-    def __init__(self, name, genre, verified=False):
-        self.name = name
-        self.genre = genre
-        self.verified = verified
-        self.songs = [] # List of Song Objects (Child)
-
-#wadah user
-class User:
-    def __init__(self, username, playlist_name="My Favorites"):
-        self.username = username
-        self.playlist_name = playlist_name
-        self.playlist = [] # List of Songs (Ref to Artist's songs)
-
-# --- GLOBAL DATA (Database Sementara) ---
-artists_list = [] 
-users_list = []
-
-# 2. FUNGSI BANTUAN (UTILITIES)
-
-def clear_screen():    #buat bersihin layar/babu kalau program yang kita pakai udh selesai
+# --- FUNGSI BANTUAN (Lokal di file ini) ---
+def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_header(title):
@@ -42,15 +13,16 @@ def print_header(title):
     print("=" * width)
     print(title.center(width))
     print("=" * width)
-    print()  # Tambahkan baris kosong setelah header
 
-# 3. LOGIKA FITUR USER
+# ==========================================
+# LOGIKA FITUR USER
+# ==========================================
 
 def user_add_song_logic(current_user):
     print("\n--- 🔍 CARI & TAMBAH LAGU ---")
     artist_name = input("Masukkan Nama Artis: ")
     
-    # 1. Cari Artisnya dulu
+    # 1. Cari Artisnya dulu di List Global
     found_artist = None
     for artist in artists_list:
         if artist.name.lower() == artist_name.lower():
@@ -61,7 +33,7 @@ def user_add_song_logic(current_user):
         print(f"❌ Artis '{artist_name}' tidak ditemukan.")
         return
 
-    # 2. Tampilkan lagu milik artis tersebut (Biar user gampang milih)
+    # 2. Tampilkan lagu milik artis tersebut
     print(f"\nLagu dari {found_artist.name}:")
     if not found_artist.songs:
         print("   (Belum ada lagu)")
@@ -81,31 +53,38 @@ def user_add_song_logic(current_user):
             
     if found_song:
         # 4. Validasi: Cek apakah lagu sudah ada di playlist user?
+        # (Kita cek apakah OBJEK lagu itu sudah ada di list user)
         if found_song in current_user.playlist:
             print(f"⚠ Lagu '{found_song.title}' sudah ada di playlistmu!")
         else:
             # --- INI INTI MLL ---
-            # Kita memasukkan OBJEK lagu yang sama ke list user
+            # Kita memasukkan OBJEK yang sama ke list user (Pointer/Reference)
             current_user.playlist.append(found_song)
             print(f"✅ Berhasil! '{found_song.title}' masuk ke playlist.")
     else:
         print(f"❌ Lagu '{song_title}' tidak ditemukan pada artis {found_artist.name}.")
 
-def user_play_all_logic(current_user):
-    if not current_user.playlist:
-        print("Playlist kosong.")
-        return
-
-    print(f"\n🔁 Memutar Playlist: {current_user.playlist_name}")
-    for i, song in enumerate(current_user.playlist, 1):
-        print(f"   ▶ Now Playing: {song.title} - {song.artist_name}...")
-        song.play_count += 1 # Update data global
-        time.sleep(1) # Simulasi durasi singkat
-    print("\n⏹ Seluruh playlist selesai diputar.")
+def user_play_logic(current_user):
+    print("\n--- ▶ PUTAR LAGU ---")
+    try:
+        idx = int(input("Masukkan Nomor Urut (Indeks) Lagu: "))
+        # Validasi indeks
+        if 0 <= idx < len(current_user.playlist):
+            song = current_user.playlist[idx]
+            print(f"🎵 Sedang memutar: {song.title} - {song.artist_name}...")
+            time.sleep(2) # Simulasi mendengarkan
+            
+            # Update Play Count (Karena ini objek yang sama dgn Artis, play count artis jg nambah)
+            song.play_count += 1 
+            print(f"   (Total diputar global: {song.play_count} kali)")
+        else:
+            print("❌ Lagu tidak ditemukan di nomor itu.")
+    except ValueError:
+        print("❌ Input harus angka.")
 
 def user_swap_logic(current_user):
     print("\n--- ⇄ ATUR URUTAN LAGU ---")
-    # Tampilkan dulu indexnya biar user tau
+    # Tampilkan indeks
     for i, song in enumerate(current_user.playlist):
         print(f"[{i}] {song.title}")
     
@@ -113,27 +92,27 @@ def user_swap_logic(current_user):
         idx1 = int(input("Masukkan Indeks Lagu 1 (Posisi Awal): "))
         idx2 = int(input("Masukkan Indeks Lagu 2 (Posisi Tujuan): "))
         
-        # Cek validitas indeks
         limit = len(current_user.playlist)
         if 0 <= idx1 < limit and 0 <= idx2 < limit:
-            # Proses SWAP di Python (Simpel banget)
+            # Proses SWAP
             current_user.playlist[idx1], current_user.playlist[idx2] = \
             current_user.playlist[idx2], current_user.playlist[idx1]
             print("✅ Urutan berhasil ditukar!")
         else:
-            print("❌ Indeks tidak valid (di luar jangkauan).")
+            print("❌ Indeks tidak valid.")
     except ValueError:
         print("❌ Masukkan angka saja.")
 
 # ==========================================
-# 4. MENU NAVIGASI USER
+# MENU NAVIGASI USER
 # ==========================================
 
 def menu_user_dashboard(current_user):
     while True:
         clear_screen()
         print_header(f"🎧 DASHBOARD: {current_user.username}")
-        print(f"Playlist: {current_user.playlist_name} | Total: {len(current_user.playlist)} Lagu")
+        print(f"Playlist: {current_user.playlist_name}")
+        print(f"Jumlah Lagu: {len(current_user.playlist)}")
         print("-" * 60)
         
         print("1. ➕ Tambah Lagu (Cari Artis -> Add)")
@@ -160,22 +139,22 @@ def menu_user_dashboard(current_user):
             input("\nEnter kembali...")
 
         elif pilihan == '3':
-            print("\n--- ▶ PUTAR LAGU ---")
-            try:
-                idx = int(input("Masukkan Nomor Urut (Indeks) Lagu: "))
-                if 0 <= idx < len(current_user.playlist):
-                    song = current_user.playlist[idx]
-                    print(f"🎵 Sedang memutar: {song.title}...")
-                    song.play_count += 1 # Update play count
-                    print(f"   (Total diputar global: {song.play_count} kali)")
-                else:
-                    print("❌ Lagu tidak ditemukan.")
-            except ValueError:
-                print("❌ Input harus angka.")
+            if not current_user.playlist:
+                print("Playlist kosong.")
+            else:
+                user_play_logic(current_user)
             input("\nEnter kembali...")
 
         elif pilihan == '4':
-            user_play_all_logic(current_user)
+            if not current_user.playlist:
+                print("Playlist kosong.")
+            else:
+                print("\n🔁 Memutar Playlist...")
+                for song in current_user.playlist:
+                    print(f"   ▶ Now Playing: {song.title}...")
+                    song.play_count += 1
+                    time.sleep(1)
+                print("⏹ Selesai.")
             input("\nEnter kembali...")
 
         elif pilihan == '5':
@@ -190,11 +169,11 @@ def menu_user_dashboard(current_user):
             try:
                 idx = int(input("Masukkan Indeks Lagu yang mau dihapus: "))
                 if 0 <= idx < len(current_user.playlist):
-                    removed = current_user.playlist.pop(idx) # Hapus dari list user saja
+                    removed = current_user.playlist.pop(idx)
                     print(f"🗑 '{removed.title}' dihapus dari playlist (Data artis tetap aman).")
                 else:
                     print("❌ Indeks salah.")
-            except:
+            except ValueError:
                 print("❌ Input salah.")
             input("\nEnter kembali...")
 
@@ -202,12 +181,13 @@ def menu_user_dashboard(current_user):
             break
 
 def menu_user_auth():
+    """Menu Login / Register Awal"""
     while True:
         clear_screen()
-        print_header("🙋‍♂️ LOGIN / SIGN UP PENDENGAR")
+        print_header("🙋‍♂️ MENU PENGGUNA (PENDENGAR)")
         print("1. Daftar Baru (Create Playlist)")
         print("2. Masuk (Login)")
-        print("0. Kembali")
+        print("0. Kembali ke Menu Utama")
         
         pilihan = input(">> Pilih (0-2): ")
 
@@ -218,42 +198,30 @@ def menu_user_auth():
                 print("❌ Username sudah ada!")
                 time.sleep(1)
             elif nama:
-                # INSERT FIRST (Sesuai Spek)
+                # INSERT FIRST (Sesuai Spek Tugas: Insert di Depan)
                 new_user = User(nama)
                 users_list.insert(0, new_user) 
                 print("✅ Akun berhasil dibuat!")
                 time.sleep(1)
+                # Langsung masuk dashboard
                 menu_user_dashboard(new_user)
 
         elif pilihan == '2':
             nama = input("Masukkan Username: ")
-            # SEARCH USER
-            found = next((u for u in users_list if u.username == nama), None)
-            if found:
-                menu_user_dashboard(found)
+            # SEARCH USER (Sequential Search)
+            found_user = None
+            for u in users_list:
+                if u.username == nama:
+                    found_user = u
+                    break
+            
+            if found_user:
+                print(f"✅ Login sukses! Halo {found_user.username}.")
+                time.sleep(1)
+                menu_user_dashboard(found_user)
             else:
                 print("❌ User tidak ditemukan.")
                 time.sleep(1)
 
         elif pilihan == '0':
             break
-
-# --- TESTING ---
-if __name__ == "__main__":
-    # Kita butuh Data Dummy Artis biar user bisa nambah lagu
-    # Karena Admin belum dibuat, kita suntik manual dulu datanya
-    
-    # 1. Buat Artis
-    a1 = Artist("Tulus", "Pop")
-    a1.songs.append(Song("Hati-Hati di Jalan", 2022, 240))
-    a1.songs[0].artist_name = "Tulus" # Helper
-    
-    a2 = Artist("Coldplay", "Rock")
-    a2.songs.append(Song("Yellow", 2000, 260))
-    a2.songs[0].artist_name = "Coldplay"
-
-    artists_list.append(a1)
-    artists_list.append(a2)
-
-    # Jalankan Menu User
-    menu_user_auth()
