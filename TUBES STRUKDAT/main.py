@@ -1,77 +1,121 @@
+# ========================================
+# MAIN - Entry Point Aplikasi
+# ========================================
+# File ini adalah controller utama aplikasi
+# Mengatur flow: Load DB -> Menu -> Save DB
+# Menu: Admin Login, User Register/Login, Exit
+
 import os
 import time
+from database.data_store import load_database, save_database, verify_admin
+from admin.menu_admin import menu_admin
+from user.menu_user import menu_user_auth
 
-# --- IMPORT MODUL DARI FOLDER LAIN ---
-# Perhatikan cara penulisannya: dari folder.nama_file import nama_fungsi
-from database.data_store import load_database, save_database
-from admin.admin_menu import menu_admin
-from user.user_menu import menu_user_auth
+# ========================================
+# FUNGSI UTILITY
+# ========================================
 
-# --- FUNGSI BANTUAN UI ---
 def clear_screen():
+    """Membersihkan layar terminal"""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_header(title):
-    width = 60
+    """Cetak header dengan border"""
+    width = 70
     print("=" * width)
     print(title.center(width))
     print("=" * width)
+    print()
 
-# --- PROGRAM UTAMA (CONTROLLER) ---
+# ========================================
+# PROGRAM UTAMA
+# ========================================
+
 def main():
-    # 1. LOAD DATA (WAJIB DULUAN!)
-    # Sebelum menu muncul, kita baca dulu file JSON biar RAM terisi.
+    """
+    Fungsi utama aplikasi
+    Flow: Load Database -> Menu Loop -> Save Database
+    """
+    
+    # === STEP 1: LOAD DATABASE ===
+    # Membaca data dari file JSON ke memory (RAM)
+    # Harus dilakukan sebelum menu muncul
+    print("🔄 Loading database...")
     load_database()
-
+    print()
+    time.sleep(1)
+    
+    # === STEP 2: MENU LOOP ===
     while True:
         clear_screen()
-        print_header("🎵 APLIKASI MUSIC STREAMING (TUGAS BESAR) 🎵")
+        print_header("🎵 MUSIC STREAMING PLATFORM 🎵")
         
-        print("Selamat Datang! Silakan pilih peran anda:")
-        print("-" * 60)
-        print("1. 👨‍🔧 Masuk sebagai ADMIN (Label Manager)")
-        print("2. 🙋‍♂️ Masuk sebagai USER (Pendengar)")
-        print("3. 💾 SIMPAN & KELUAR (Save & Exit)")
-        print("-" * 60)
+        print("Selamat Datang! Pilih peran Anda:")
+        print()
+        print("  1. 👨‍💼 ADMIN - Manajemen Database Musik")
+        print("  2. 🎧 USER - Playlist & Streaming")
+        print("  3. 💾 SIMPAN & KELUAR")
+        print()
+        print("-" * 70)
         
-        pilihan = input(">> Pilih menu (1-3): ")
-
+        pilihan = input(">> Pilih menu (1-3): ").strip()
+        
+        # === MENU 1: ADMIN LOGIN ===
         if pilihan == '1':
-            # --- LOGIN ADMIN ---
-            # Kita kasih password sederhana biar aman dikit
-            pw = input("\n🔐 Masukkan Password Admin: ")
+            clear_screen()
+            print_header("🔐 LOGIN ADMIN")
             
-            if pw == "admin123": 
-                print("✅ Akses Diterima!")
+            # Input kredensial admin
+            username = input("Username: ").strip()
+            password = input("Password: ").strip()
+            
+            # Verifikasi menggunakan fungsi dari data_store
+            # fungsi verify_admin akan melakukan Sequential Search untuk cari admin
+            if verify_admin(username, password):
+                print(f"\n✅ Login berhasil! Selamat datang, {username}.")
                 time.sleep(1)
-                # Pindah ke file admin/admin_menu.py
-                menu_admin() 
+                
+                # Masuk ke Admin Dashboard
+                menu_admin()
             else:
-                print("❌ Password Salah!")
-                time.sleep(1)
-
+                print("\n❌ Username atau password salah!")
+                time.sleep(2)
+        
+        # === MENU 2: USER REGISTER/LOGIN ===
         elif pilihan == '2':
-            # --- LOGIN USER ---
-            # Pindah ke file user/user_menu.py
-            menu_user_auth() 
-
+            # Pindah ke menu user auth (register/login)
+            menu_user_auth()
+        
+        # === MENU 3: SAVE & EXIT ===
         elif pilihan == '3':
-            # --- SAVE & EXIT ---
-            print("\n💾 Sedang menyimpan perubahan ke Database JSON...")
+            clear_screen()
+            print_header("💾 SIMPAN & KELUAR")
             
-            # Pindahkan data dari RAM (List) ke File (Hard Disk)
-            save_database() 
+            print("Menyimpan semua perubahan ke database...")
             
-            print("✅ Data tersimpan aman.")
-            print("Terima kasih! Sampai jumpa lagi.")
+            # === STEP 3: SAVE DATABASE ===
+            # Menyimpan data dari memory (RAM) ke file JSON (Disk)
+            # Semua perubahan (artis, lagu, user, playlist, play count) disimpan
+            save_database()
+            
+            print("\n✅ Semua data berhasil disimpan!")
+            print("\nTerima kasih telah menggunakan Music Streaming Platform!")
+            print("Sampai jumpa lagi! 👋")
             time.sleep(2)
-            break # Keluar dari loop while, program berhenti.
             
+            # Keluar dari loop, program selesai
+            break
+        
         else:
-            print("❌ Pilihan tidak valid!")
+            print("\n❌ Pilihan tidak valid!")
             time.sleep(1)
 
-# --- TOMBOL START ---
-# Ini titik awal program berjalan
+
+# ========================================
+# ENTRY POINT
+# ========================================
+# Ini adalah titik awal program berjalan
+# Python akan menjalankan fungsi main() saat file ini dieksekusi
+
 if __name__ == "__main__":
     main()
