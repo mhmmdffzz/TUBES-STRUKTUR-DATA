@@ -1,30 +1,26 @@
-import os #guna untuk membersihkan layar
-import time #untuk jeda waktu
+import os
+import time
 
-# IMPORT FUNGSI DARI FOLDER LAIN
-# Kita panggil fungsi yang ada di folder 'database', 'admin', dan 'user'
-# Pastikan nama folder dan filenya sesuai ya!
-
+# --- IMPORT MODUL DARI FOLDER LAIN ---
+# Perhatikan cara penulisannya: dari folder.nama_file import nama_fungsi
 from database.data_store import load_database, save_database
 from admin.admin_menu import menu_admin
 from user.user_menu import menu_user_auth
 
-# --- FUNGSI BANTUAN (UTILITIES) ---
-# Kita taruh clear_screen di sini atau bisa bikin file utils.py terpisah
-# Biar gampang, kita taruh sini dulu aja buat Main Menu.
-def clear_screen(): 
-    os.system('cls' if os.name == 'nt' else 'clear') #untuk membersihkan layar/terminal
+# --- FUNGSI BANTUAN UI ---
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-def print_header(title): #untuk mencetak header
+def print_header(title):
     width = 60
     print("=" * width)
     print(title.center(width))
     print("=" * width)
-    print()  # Tambahkan baris kosong setelah header
 
-# --- PROGRAM UTAMA ---
+# --- PROGRAM UTAMA (CONTROLLER) ---
 def main():
-    # 1. LOAD DATA (Penting! Baca data dari Hard Disk ke RAM)
+    # 1. LOAD DATA (WAJIB DULUAN!)
+    # Sebelum menu muncul, kita baca dulu file JSON biar RAM terisi.
     load_database()
 
     while True:
@@ -35,38 +31,47 @@ def main():
         print("-" * 60)
         print("1. 👨‍🔧 Masuk sebagai ADMIN (Label Manager)")
         print("2. 🙋‍♂️ Masuk sebagai USER (Pendengar)")
-        print("3. 💾 KELUAR (Save & Exit)")
+        print("3. 💾 SIMPAN & KELUAR (Save & Exit)")
         print("-" * 60)
         
         pilihan = input(">> Pilih menu (1-3): ")
 
         if pilihan == '1':
-            # Masuk ke Folder Admin
-            # Kita kasih password sederhana di sini biar aman
+            # --- LOGIN ADMIN ---
+            # Kita kasih password sederhana biar aman dikit
             pw = input("\n🔐 Masukkan Password Admin: ")
+            
             if pw == "admin123": 
                 print("✅ Akses Diterima!")
                 time.sleep(1)
-                menu_admin() # Panggil fungsi dari file admin/admin_menu.py
+                # Pindah ke file admin/admin_menu.py
+                menu_admin() 
             else:
                 print("❌ Password Salah!")
                 time.sleep(1)
 
         elif pilihan == '2':
-            # Masuk ke Folder User
-            menu_user_auth() # Panggil fungsi dari file user/user_menu.py
+            # --- LOGIN USER ---
+            # Pindah ke file user/user_menu.py
+            menu_user_auth() 
 
         elif pilihan == '3':
-            # 2. SAVE DATA (Penting! Simpan RAM ke Hard Disk)
-            print("\nSedang menyimpan data database...")
+            # --- SAVE & EXIT ---
+            print("\n💾 Sedang menyimpan perubahan ke Database JSON...")
+            
+            # Pindahkan data dari RAM (List) ke File (Hard Disk)
             save_database() 
-            print("✅ Data tersimpan. Terima kasih telah menggunakan aplikasi ini!")
-            break
+            
+            print("✅ Data tersimpan aman.")
+            print("Terima kasih! Sampai jumpa lagi.")
+            time.sleep(2)
+            break # Keluar dari loop while, program berhenti.
             
         else:
             print("❌ Pilihan tidak valid!")
             time.sleep(1)
 
 # --- TOMBOL START ---
+# Ini titik awal program berjalan
 if __name__ == "__main__":
     main()
