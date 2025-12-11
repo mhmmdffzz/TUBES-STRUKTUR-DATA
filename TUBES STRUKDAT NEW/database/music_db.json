@@ -1,0 +1,43 @@
+{
+  "artists": [
+    {
+      "nama_artis": "Tulus",
+      "genre": "Pop",
+      "tahun_debut": 2011,
+      "songs": [
+        "Hati-Hati di Jalan",
+        "Monokrom",
+        "Sepatu"
+      ]
+    },
+    {
+      "nama_artis": "Sheila on 7",
+      "genre": "Pop Rock",
+      "tahun_debut": 1996,
+      "songs": [
+        "Dan",
+        "Sephia",
+        "Kita",
+        "Melompat Lebih Tinggi"
+      ]
+    },
+    {
+      "nama_artis": "Raisa",
+      "genre": "R&B",
+      "tahun_debut": 2011,
+      "songs": [
+        "Serba Salah",
+        "Mantan Terindah"
+      ]
+    },
+    {
+      "nama_artis": "Isyana Sarasvati",
+      "genre": "Pop",
+      "tahun_debut": 2015,
+      "songs": [
+        "Tetap Dalam Jiwa",
+        "Kau Adalah"
+      ]
+    }
+  ]
+}
