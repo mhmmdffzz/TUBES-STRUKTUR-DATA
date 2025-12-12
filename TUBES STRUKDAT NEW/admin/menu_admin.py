@@ -1,15 +1,3 @@
-# ========================================
-# MENU KATALOG - Manajemen Katalog Album Musik
-# ========================================
-# File ini berisi semua fitur untuk katalog:
-# 1. Tambah Artis (INSERT PARENT)
-# 2. Tambah Lagu ke Artis (INSERT CHILD)
-# 3. Lihat Semua Data (VIEW NESTED)
-# 4. Hapus Lagu (DELETE CHILD)
-# 5. Hapus Artis (DELETE PARENT & CASCADE)
-# 6. Cari Artis (SEARCH)
-# 7. Laporan (COUNTING & MAX)
-
 import os
 import time
 from database.data_store import (
@@ -17,19 +5,12 @@ from database.data_store import (
     add_artist, get_artist, delete_artist, search_artist,
     add_song_to_artist, delete_song_from_artist,
     count_total_songs, get_artist_with_most_songs, get_all_artists_sorted_by_songs
-)
-
-# ========================================
-# FUNGSI UTILITY
-# ========================================
+) # Import fungsi dan struktur data dari data_store
 
 def clear_screen():
-    """Membersihkan layar terminal"""
     os.system('cls' if os.name == 'nt' else 'clear')
-    print("\033[H\033[J", end="")
 
 def print_header(title):
-    """Cetak header dengan border"""
     width = 70
     print("=" * width)
     print(title.center(width))
@@ -37,27 +18,16 @@ def print_header(title):
     print()
 
 def pause():
-    """Pause dan tunggu user tekan Enter"""
     input("\n[Tekan Enter untuk kembali ke menu...]")
 
-
-# ========================================
-# FITUR 1: TAMBAH ARTIS (INSERT PARENT)
-# ========================================
-
 def katalog_add_artist():
-    """
-    Menambahkan artis baru ke database (INSERT LAST)
-    """
     print("\n--- TAMBAH ARTIS BARU ---\n")
     
-    # Input data artis
     nama = input("Nama Artis: ").strip()
     if not nama:
         print("Nama artis tidak boleh kosong!")
         return
     
-    # Cek apakah artis sudah ada
     if get_artist(nama):
         print(f"Artis '{nama}' sudah ada di database!")
         return
@@ -73,7 +43,6 @@ def katalog_add_artist():
         print("Tahun debut harus berupa angka!")
         return
     
-    # Tambah artis
     if add_artist(nama, genre, tahun_debut):
         print(f"\nArtis '{nama}' berhasil ditambahkan!")
         print(f"   Genre: {genre}")
@@ -87,10 +56,7 @@ def katalog_add_artist():
 # ========================================
 
 def katalog_add_song():
-    """
-    Menambahkan lagu ke artis tertentu (INSERT CHILD)
-    Child berupa tipe dasar String (judul lagu saja)
-    """
+  
     print("\n--- TAMBAH LAGU KE ARTIS ---\n")
     
     if not artists_list:
@@ -123,23 +89,14 @@ def katalog_add_song():
     else:
         print(f"Gagal menambahkan lagu! (Mungkin lagu sudah ada)")
 
-
-# ========================================
-# FITUR 3: LIHAT SEMUA DATA (VIEW NESTED)
-# ========================================
-
 def katalog_view_all():
-    """
-    Menampilkan semua data katalog musik (NESTED VIEW)
-    Parent-Child: Artis -> Daftar Judul Lagu
-    """
+ 
     print("\n--- KATALOG ALBUM MUSIK LENGKAP ---\n")
     
     if not artists_list:
         print("(Katalog masih kosong)")
         return
     
-    # Loop semua artis (Parent)
     for i, artist in enumerate(artists_list, 1):
         print(f"{i}. {artist.nama_artis}")
         print(f"   Genre      : {artist.genre}")
@@ -155,15 +112,8 @@ def katalog_view_all():
             print(f"   (Belum ada lagu)")
         print()
 
-
-# ========================================
-# FITUR 4: HAPUS LAGU (DELETE CHILD)
-# ========================================
-
 def katalog_delete_song():
-    """
-    Menghapus lagu dari artis tertentu (DELETE CHILD)
-    """
+
     print("\n--- HAPUS LAGU ---\n")
     
     if not artists_list:
@@ -208,11 +158,6 @@ def katalog_delete_song():
     else:
         print(f"Lagu '{judul_lagu}' tidak ditemukan!")
 
-
-# ========================================
-# FITUR 5: HAPUS ARTIS (DELETE PARENT & CASCADE)
-# ========================================
-
 def katalog_delete_artist():
     """
     Menghapus artis beserta semua lagunya (DELETE PARENT & CASCADE)
@@ -237,7 +182,7 @@ def katalog_delete_artist():
         return
     
     # Konfirmasi (karena akan menghapus semua lagu juga)
-    print(f"\n⚠️  PERHATIAN: Menghapus artis '{artist.nama_artis}' juga akan menghapus {artist.song_count()} lagu!")
+    print(f"\n PERHATIAN: Menghapus artis '{artist.nama_artis}' juga akan menghapus {artist.song_count()} lagu!")
     konfirmasi = input("Yakin hapus? (y/n): ").lower()
     
     if konfirmasi != 'y':
@@ -249,11 +194,6 @@ def katalog_delete_artist():
         print(f"\nArtis '{nama_artis}' dan semua lagunya berhasil dihapus!")
     else:
         print("Gagal menghapus artis!")
-
-
-# ========================================
-# FITUR 6: CARI ARTIS (SEARCH)
-# ========================================
 
 def katalog_search_artist():
     """
@@ -284,11 +224,6 @@ def katalog_search_artist():
             print(f"   Daftar Lagu:")
             for j, judul_lagu in enumerate(artist.songs, 1):
                 print(f"      {j}. {judul_lagu}")
-
-
-# ========================================
-# FITUR 7: LAPORAN (COUNTING & MAX)
-# ========================================
 
 def katalog_report():
     """
@@ -327,11 +262,6 @@ def katalog_report():
         print(f"   Daftar Lagu:")
         for j, judul_lagu in enumerate(max_artist.songs, 1):
             print(f"      {j}. {judul_lagu}")
-
-
-# ========================================
-# MENU UTAMA KATALOG
-# ========================================
 
 def menu_katalog():
     """
