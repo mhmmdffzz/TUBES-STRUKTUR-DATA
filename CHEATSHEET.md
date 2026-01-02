@@ -1,6 +1,240 @@
 # 📋 CHEATSHEET - KATALOG MUSIK (MLL 1-N)
 
-## 📌 STRUKTUR DATA
+## � STRUKTUR FILE PROJECT
+
+### 1️⃣ **katalog.h** (Header File - 151 baris)
+**Fungsi:** Deklarasi struktur data, prototype fungsi, dan utility functions
+
+**Isi:**
+```cpp
+// STRUCT DEFINITIONS
+- infoArtis          // Record: nama, genre, tahunDebut
+- elmArtis           // Node: info + laguArray + jumlahLagu + next
+- List               // Parent list: first pointer
+
+// TYPEDEF
+- adrArtis           // Pointer ke elmArtis
+
+// FUNCTION PROTOTYPES (Deklarasi saja, tanpa implementasi)
+- createList()
+- createElementArtis()
+- insertLastArtis()
+- searchArtis()
+- deleteArtis()
+- insertLagu()
+- deleteLagu()
+- loadFromCSV()
+- saveToCSV()
+- showAllData()
+- dll... (semua fungsi dideklarasikan di sini)
+
+// INLINE UTILITY FUNCTIONS (Langsung ada implementasi)
+- clearScreen()      // system("cls")
+- displayHeader()    // Tampilkan header dengan border
+- readString()       // Input string dari user
+- readInteger()      // Input integer dari user
+- waitForEnter()     // Tunggu user tekan enter
+- readMenuChoice()   // Baca pilihan menu 0-8
+```
+
+**Kenapa perlu file ini?**
+- Supaya file lain bisa tahu struktur data apa yang ada
+- Supaya main.cpp tahu fungsi apa aja yang bisa dipanggil
+- Cukup `#include "katalog.h"` → semua deklarasi langsung tersedia
+
+---
+
+### 2️⃣ **katalog.cpp** (Implementation File - 436 baris)
+**Fungsi:** Implementasi SEMUA fungsi yang dideklarasikan di katalog.h
+
+**Isi:**
+```cpp
+#include "katalog.h"    // Ambil deklarasi dari header
+
+// IMPLEMENTASI FUNGSI DASAR
+createList()            // Set L.first = nullptr
+createElementArtis()    // new elmArtis + alokasi laguArray[100]
+insertLastArtis()       // Traverse sampai last → insert → saveToCSV()
+
+// IMPLEMENTASI CRUD - READ
+searchArtis()           // Loop + case-insensitive compare
+showAllData()           // Tampilkan semua artis + lagu
+showReport()            // Statistik total artis & lagu
+
+// IMPLEMENTASI CRUD - UPDATE
+updateArtisInfo()       // Cari → update info → saveToCSV()
+
+// IMPLEMENTASI CRUD - DELETE
+deleteArtis()           // Hapus node + delete[] laguArray
+deleteLagu()            // Cari index → shift array kiri
+deallocateList()        // Loop semua node → delete satu-satu
+
+// IMPLEMENTASI FILE I/O
+loadFromCSV()           // Baca file → parse → insert ke list
+saveToCSV()             // Loop list → tulis ke file
+
+// IMPLEMENTASI INSERT LAGU
+insertLagu()            // Tambah ke laguArray[jumlahLagu]
+insertLaguNoSave()      // Sama tapi tanpa save (untuk loading)
+
+// IMPLEMENTASI COUNTING
+countTotalArtis()       // Hitung jumlah node
+countTotalLagu()        // Sum semua jumlahLagu dari tiap artis
+
+// IMPLEMENTASI HELPER
+displayMenu()           // Cetak menu 0-8
+exitProgram()           // Pesan exit + saveToCSV()
+```
+
+**Kenapa perlu file ini?**
+- Memisahkan deklarasi (katalog.h) dengan implementasi (katalog.cpp)
+- File jadi lebih terorganisir dan mudah di-maintain
+- Kalau mau ubah cara kerja fungsi, cukup edit di sini
+
+---
+
+### 3️⃣ **main.cpp** (Main Program - 169 baris)
+**Fungsi:** Entry point program, menu loop, dan orchestrator
+
+**Isi:**
+```cpp
+#include "katalog.h"    // Biar bisa pakai semua fungsi
+
+int main() {
+    // DEKLARASI VARIABEL
+    List L;                      // List utama
+    string filename = "music_db.csv";
+    int pilihan;                 // Input menu user
+    string nama, genre, judul;   // Input data dari user
+    int tahun;
+    adrArtis pFound;             // Pointer hasil search
+    
+    // INISIALISASI
+    createList(L);               // L.first = nullptr
+    loadFromCSV(L, filename);    // Load data dari file
+    
+    // MENU LOOP (do-while)
+    do {
+        clearScreen();
+        displayMenu();
+        pilihan = readMenuChoice();
+        
+        switch (pilihan) {
+            case 1:  // Tambah Artis
+                input data → createElementArtis() → insertLastArtis()
+                
+            case 2:  // Tambah Lagu
+                input nama → searchArtis() → insertLagu()
+                
+            case 3:  // Hapus Artis
+                input nama → deleteArtis()
+                
+            case 4:  // Hapus Lagu
+                input nama → searchArtis() → 
+                verifikasi jumlahLagu > 0 → deleteLagu()
+                
+            case 5:  // Lihat Semua
+                showAllData()
+                
+            case 6:  // Cari Artis
+                input nama → searchArtis() → tampilkan detail
+                
+            case 7:  // Statistik
+                showReport()
+                
+            case 8:  // Update Artis
+                input data → updateArtisInfo()
+                
+            case 0:  // Keluar
+                exitProgram()
+                
+            default:
+                "Pilihan tidak valid"
+        }
+        
+        if (pilihan != 0) {
+            waitForEnter();      // Pause sebelum loop lagi
+        }
+        
+    } while (pilihan != 0);      // Loop sampai user pilih 0
+    
+    // CLEANUP
+    deallocateList(L);           // Hapus semua memory
+    return 0;
+}
+```
+
+**Kenapa perlu file ini?**
+- Entry point: program dimulai dari `int main()`
+- Mengatur alur program (inisialisasi → loop menu → cleanup)
+- Menghubungkan user input dengan fungsi-fungsi yang ada
+
+---
+
+### 4️⃣ **music_db.csv** (Data File)
+**Fungsi:** Penyimpanan data persisten
+
+**Format:**
+```
+NamaArtis;Genre;TahunDebut;JudulLagu
+Taylor Swift;Pop;2006;Love Story
+Taylor Swift;Pop;2006;Shake It Off
+Taylor Swift;Pop;2006;Anti-Hero
+Drake;Hip-Hop;2006;Hotline Bling
+Ariana Grande;Pop;2011;Belum Ada Lagu
+```
+
+**Aturan:**
+- Delimiter: `;` (semicolon)
+- 1 baris = 1 lagu
+- Artis tanpa lagu ditulis sebagai: `NamaArtis;Genre;Tahun;Belum Ada Lagu`
+- Kalau artis punya 3 lagu → 3 baris dengan nama artis yang sama
+
+**Kapan file ini diakses?**
+- **Load:** Saat program start (`loadFromCSV()`)
+- **Save:** Setiap kali ada perubahan data (insert, update, delete)
+
+---
+
+## 🔗 HUBUNGAN ANTAR FILE
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        main.cpp                             │
+│  - Entry point program                                      │
+│  - Menu loop (do-while)                                     │
+│  - Panggil fungsi-fungsi dari katalog.h/cpp                │
+└────────────────────────┬────────────────────────────────────┘
+                         │ #include "katalog.h"
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│                       katalog.h                             │
+│  - Deklarasi struct (infoArtis, elmArtis, List)            │
+│  - Prototype fungsi (createList, insertLagu, dll)          │
+│  - Inline utility functions (clearScreen, readString)      │
+└────────────────────────┬────────────────────────────────────┘
+                         │ #include "katalog.h"
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│                      katalog.cpp                            │
+│  - Implementasi SEMUA fungsi                                │
+│  - CRUD operations                                          │
+│  - File I/O (loadFromCSV, saveToCSV)                       │
+│  - Memory management (deallocateList)                       │
+└────────────────────────┬────────────────────────────────────┘
+                         │ read/write
+                         ↓
+┌─────────────────────────────────────────────────────────────┐
+│                    music_db.csv                             │
+│  - Data storage (artis + lagu)                             │
+│  - Format: Nama;Genre;Tahun;Judul                          │
+│  - Auto-save setiap perubahan                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## �📌 STRUKTUR DATA
 
 ### Parent (Artis) - Linked List
 ```cpp
