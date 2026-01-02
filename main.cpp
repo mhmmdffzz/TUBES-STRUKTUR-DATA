@@ -1,6 +1,6 @@
 #include "katalog.h"
 
-// ========== PROGRAM UTAMA TUBES STRUKDAT ==========
+//  PROGRAM UTAMA TUBES STRUKDAT 
 // IMPLEMENTASI: MLL 1-N dengan CRUD + Search + Pengolahan MLL
 // Konteks: Katalog Musik (Artis -> Lagu)
 

@@ -1,7 +1,7 @@
 #ifndef KATALOG_H
 #define KATALOG_H
 
-// ========== LIBRARY YANG DIGUNAKAN ==========
+//  LIBRARY YANG DIGUNAKAN 
 #include <iostream>     // Library untuk input/output: cout, cin, endl
 #include <fstream>      // Library untuk file I/O: ifstream (baca file), ofstream (tulis file)
 #include <sstream>      // Library untuk string parsing: stringstream, getline dengan delimiter
@@ -11,13 +11,13 @@
 
 using namespace std;
 
-// ========== SPESIFIKASI TUBES STRUKDAT ==========
+// SPESIFIKASI TUBES STRUKDAT 
 // 1.a BST/MLL 1-N: IMPLEMENTASI MLL 1-N
 // - Data pada node berupa tipe bentukan (record): infoArtis
 // - Satu atribut berupa array tipe dasar: string* laguArray
 // - List parent dan anak tidak boleh sama: Artis (parent) vs Lagu (child array)
 
-// === DEFINISI STRUKTUR DATA MLL 1-N ===
+//  DEFINISI STRUKTUR DATA MLL 1-N 
 struct infoArtis {    // SPESIFIKASI 1.a: Tipe bentukan (record)
     string nama;
     string genre;
@@ -38,22 +38,22 @@ struct List {         // SPESIFIKASI 1.a: List parent
 
 typedef elmArtis* adrArtis;
 
-// ========== SPESIFIKASI TUBES: FUNGSIONALITAS ==========
+//  SPESIFIKASI TUBES: FUNGSIONALITAS 
 // 2. Fungsionalitas:
-// a. Dasar: CRUD + Search
+// a. Dasar: CRUD + Search`
 // b. Pengolahan MLL: Counting, dll
 
-// === PROTOTYPES OPERASI DASAR ===
+//  PROTOTYPES OPERASI DASAR 
 adrArtis createElementArtis(const string &nama, const string &genre, int tahun);
 
-// === PROTOTYPES CRUD + SEARCH (SPESIFIKASI 2.a) ===
+// PROTOTYPES CRUD + SEARCH (SPESIFIKASI 2.a) 
 void createList(List &L);                    // CREATE: Inisialisasi list
 void insertLastArtis(List &L, adrArtis P, const string &filename = "music_db.csv");  // CREATE: Tambah artis
 adrArtis searchArtis(List L, const string &nama);     // SEARCH: Cari artis
 void deleteArtis(List &L, const string &nama, const string &filename = "music_db.csv");  // DELETE: Hapus artis
 void updateArtisInfo(List &L, const string &nama, const string &genreBaru, int tahunBaru, const string &filename = "music_db.csv");  // UPDATE: Edit info artis
 
-// === PROTOTYPES OPERASI LAGU (CHILD ELEMENT) ===
+//  PROTOTYPES OPERASI LAGU (CHILD ELEMENT) 
 void insertLagu(adrArtis P, const string &judul, List &L, const string &filename = "music_db.csv");    // CREATE: Tambah lagu
 void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename = "music_db.csv");    // DELETE: Hapus lagu
 
@@ -61,25 +61,25 @@ void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename
 void insertLaguNoSave(adrArtis P, const string &judul);
 void insertLastArtisNoSave(List &L, adrArtis P);
 
-// === PROTOTYPES UTILITY LIST ===
+// PROTOTYPES UTILITY LIST 
 bool isListEmpty(List L);
 void deallocateList(List &L);
 
-// === PROTOTYPES DISPLAY ===
+// PROTOTYPES DISPLAY 
 void showAllData(List L);                    // READ: Tampil semua data
 void displayMenu();                          // Display main menu with better UI
 void showReport(List L);                     // Show system report with statistics
 void exitProgram(const string &filename);   // Exit program with cleanup message
 
-// === PROTOTYPES PENGOLAHAN MLL (SPESIFIKASI 2.b) ===
+// PROTOTYPES PENGOLAHAN MLL (SPESIFIKASI 2.b) 
 int countTotalLagu(List L);                  // Counting total lagu
 int countTotalArtis(List L);                 // Counting total artis
 
-// === PROTOTYPES FILE I/O ===
+// PROTOTYPES FILE I/O 
 bool loadFromCSV(const string &filename, List &L);
 bool saveToCSV(List L, const string &filename);
 
-// === PROTOTYPES UTILITY ===
+// PROTOTYPES UTILITY 
 int getMenuChoice();
 
 //  UTILITY FUNCTIONS UNTUK UI 
