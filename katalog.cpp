@@ -1,12 +1,12 @@
 #include "katalog.h"
 
-// ========== IMPLEMENTASI SPESIFIKASI TUBES STRUKDAT ==========
+//   IMPLEMENTASI SPESIFIKASI TUBES STRUKDAT   
 // SPESIFIKASI 1.a: MLL 1-N dengan:
 // - Record (tipe bentukan): infoArtis
 // - Array tipe dasar: string* laguArray
 // - Parent: List Artis, Child: Array Lagu
 
-// === OPERASI DASAR ELEMENT ===
+//  OPERASI DASAR ELEMENT 
 adrArtis createElementArtis(const string &nama, const string &genre, int tahun) {
     adrArtis P = new elmArtis;                    // SPESIFIKASI 1.a: Alokasi node MLL
     P->info.nama = nama;                          // Record field 1
@@ -19,9 +19,9 @@ adrArtis createElementArtis(const string &nama, const string &genre, int tahun) 
     return P;
 }
 
-// ========== SPESIFIKASI 2.a: CRUD + SEARCH ==========
+// SPESIFIKASI 2.a: CRUD + SEARCH
 
-// === OPERASI CREATE ===
+//  OPERASI CREATE 
 void createList(List &L) {
     L.first = nullptr;                            // SPESIFIKASI 2.a: CREATE - Inisialisasi list
 }
@@ -42,7 +42,7 @@ void insertLastArtis(List &L, adrArtis P, const string &filename) {
     saveToCSV(L, filename);
 }
 
-// === OPERASI SEARCH ===
+//  OPERASI SEARCH 
 adrArtis searchArtis(List L, const string &nama) {
     // SPESIFIKASI 2.a: SEARCH - Pencarian dengan case insensitive
     // Trim whitespace and convert input to lowercase for case insensitive search
@@ -71,7 +71,7 @@ adrArtis searchArtis(List L, const string &nama) {
     return nullptr;                               // SEARCH tidak ditemukan
 }
 
-// === OPERASI DELETE ===
+//  OPERASI DELETE 
 void deleteArtis(List &L, const string &nama, const string &filename) {
     // SPESIFIKASI 2.a: DELETE - Hapus artis dari list
     adrArtis P = searchArtis(L, nama);            // Cari dulu dengan SEARCH
@@ -104,7 +104,7 @@ void deleteArtis(List &L, const string &nama, const string &filename) {
     saveToCSV(L, filename);
 }
 
-// === OPERASI UPDATE ===
+//  OPERASI UPDATE 
 void updateArtisInfo(List &L, const string &nama, const string &genreBaru, int tahunBaru, const string &filename) {
     // SPESIFIKASI 2.a: UPDATE - Edit informasi artis
     adrArtis P = searchArtis(L, nama);            // Cari dulu dengan SEARCH
@@ -124,7 +124,7 @@ void updateArtisInfo(List &L, const string &nama, const string &genreBaru, int t
     }
 }
 
-// ========== OPERASI ARRAY TIPE DASAR (CHILD) ==========
+//  OPERASI ARRAY TIPE DASAR (CHILD) 
 // SPESIFIKASI 1.a: Array tipe dasar (string) dalam record
 
 void insertLagu(adrArtis P, const string &judul, List &L, const string &filename) {
@@ -244,7 +244,7 @@ void deallocateList(List &L) {
     L.first = nullptr;
 }
 
-// === OPERASI DISPLAY ===
+//  OPERASI DISPLAY 
 void showAllData(List L) {
     displayHeader("DATA KATALOG MUSIK");
     
@@ -328,7 +328,7 @@ void exitProgram(const string &filename) {
     cout << "  " << string(20, '-') << endl;
 }
 
-// ========== SPESIFIKASI 2.b: PENGOLAHAN MLL ==========
+// SPESIFIKASI 2.b: PENGOLAHAN MLL 
 // Counting, Min Max, dll.
 
 int countTotalLagu(List L) {
@@ -353,7 +353,7 @@ int countTotalArtis(List L) {
     return count;
 }
 
-// === FILE I/O OPERATIONS ===
+//  FILE I/O OPERATIONS 
 bool loadFromCSV(const string &filename, List &L) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -381,7 +381,10 @@ bool loadFromCSV(const string &filename, List &L) {
                     insertLastArtisNoSave(L, P);
                 }
                 
-                insertLaguNoSave(P, judul);
+                // Skip jika judul = "Belum Ada Lagu" (placeholder untuk artis tanpa lagu)
+                if (judul != "Belum Ada Lagu") {
+                    insertLaguNoSave(P, judul);
+                }
             } catch (const exception& e) {
                 // Skip invalid lines silently
             }
@@ -416,20 +419,20 @@ bool saveToCSV(List L, const string &filename) {
     return true;
 }
 
-// === UTILITY FUNCTIONS ===
+//  UTILITY FUNCTIONS 
 int getMenuChoice() {
     int choice;
     bool valid = false;
     
     while (!valid) {
         if (cin >> choice) {
-            valid = true;
+            valid = true; //kalau inputnya benar ke sini
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         } else {
             cout << "  [ERROR] Input tidak valid! Masukkan angka pilihan menu." << endl;
             cout << "  Pilihan: ";
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); //kalau salah ke sini dan dia bakal ngulang terus
         }
     }
     return choice;

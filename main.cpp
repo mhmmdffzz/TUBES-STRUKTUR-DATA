@@ -1,6 +1,4 @@
 #include "katalog.h"
-
-//  PROGRAM UTAMA TUBES STRUKDAT 
 // IMPLEMENTASI: MLL 1-N dengan CRUD + Search + Pengolahan MLL
 // Konteks: Katalog Musik (Artis -> Lagu)
 
@@ -16,10 +14,13 @@ int main() {
         // Start with empty database - no message needed
     }
 
-    int pilihan;
-    string nama, genre, judul;
-    int tahun;
-    adrArtis pFound;
+    // Variabel untuk menyimpan input user
+    int pilihan;                // Menyimpan pilihan menu user (0-8)
+    string nama;                // Menyimpan nama artis dari input user
+    string genre;               // Menyimpan genre musik dari input user
+    string judul;               // Menyimpan judul lagu dari input user
+    int tahun;                  // Menyimpan tahun debut artis dari input user
+    adrArtis pFound;            // Menyimpan alamat/pointer artis hasil pencarian
 
     do {
         clearScreen();
@@ -72,13 +73,19 @@ int main() {
                 pFound = searchArtis(L, nama);            // SEARCH operation
                 
                 if (pFound != nullptr) {
-                    cout << "\n  Lagu " << pFound->info.nama << ":" << endl;
-                    for (int i = 0; i < pFound->jumlahLagu; i++) {
-                        cout << "    + " << pFound->laguArray[i] << endl;
+                    // Validasi: cek apakah artis punya lagu
+                    if (pFound->jumlahLagu == 0) {
+                        cout << "\n  [!] Artis '" << pFound->info.nama << "' belum memiliki lagu" << endl;
+                        cout << "  Tidak ada lagu yang bisa dihapus" << endl;
+                    } else {
+                        cout << "\n  Lagu " << pFound->info.nama << ":" << endl;
+                        for (int i = 0; i < pFound->jumlahLagu; i++) {
+                            cout << "    + " << pFound->laguArray[i] << endl;
+                        }
+                        
+                        judul = readString("\n  Hapus lagu: ");
+                        deleteLagu(pFound, judul, L, filename);  // DELETE dari array
                     }
-                    
-                    judul = readString("\n  Hapus lagu: ");
-                    deleteLagu(pFound, judul, L, filename);  // DELETE dari array
                 } else {
                     cout << "  Artis tidak ditemukan" << endl;
                 }
@@ -88,7 +95,7 @@ int main() {
             case 5: {
                 // SPESIFIKASI 2.a: CRUD - DELETE Artis (dari MLL)
                 clearScreen();
-                displayHeader("HAPUS ARTIS");
+                    displayHeader("HAPUS ARTIS");
                 nama = readString(">> Nama Artis yang dihapus: ");
                 deleteArtis(L, nama, filename);          // DELETE operation
                 break;
@@ -145,7 +152,7 @@ int main() {
             }
 
             default: {
-                cout << "  Pilihan tidak valid (0-8)" << endl;
+                cout << "  Pilihan tidak valid (0-8)" << endl; //untuk menangkap pilihan diluar menu
                 break;
             }
         }
