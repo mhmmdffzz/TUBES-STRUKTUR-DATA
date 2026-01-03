@@ -6,10 +6,11 @@ int main() {
     List L;                                       // SPESIFIKASI 1.a: Deklarasi MLL
     createList(L);                                // SPESIFIKASI 2.a: CREATE list
     
-    string filename = "music_db.csv";
+    // ========== KONEKSI DATABASE (CSV FILE) ==========
+    string filename = "music_db.csv";             // DATABASE: Nama file CSV sebagai storage
     
-    // Load existing data
-    bool loaded = loadFromCSV(filename, L);
+    // DATABASE: Load/baca data dari CSV ke memory (MLL)
+    bool loaded = loadFromCSV(filename, L);       // KONEKSI: Read dari file ke struktur data
     if (!loaded) {
         // Start with empty database - no message needed
     }
@@ -19,6 +20,7 @@ int main() {
     string nama;                // Menyimpan nama artis dari input user
     string genre;               // Menyimpan genre musik dari input user
     string judul;               // Menyimpan judul lagu dari input user
+    string negara;
     int tahun;                  // Menyimpan tahun debut artis dari input user
     adrArtis pFound;            // Menyimpan alamat/pointer artis hasil pencarian
 

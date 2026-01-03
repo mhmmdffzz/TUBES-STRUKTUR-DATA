@@ -21,7 +21,7 @@ using namespace std;
 struct infoArtis {    // SPESIFIKASI 1.a: Tipe bentukan (record)
     string nama;
     string genre;
-    int tahunDebut;
+    int tahunDebut;   // Tahun debut artis
 };
 
 struct elmArtis {     // SPESIFIKASI 1.a: Node MLL dengan record + array tipe dasar

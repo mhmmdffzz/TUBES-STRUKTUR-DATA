@@ -2,7 +2,7 @@
 
 //   IMPLEMENTASI SPESIFIKASI TUBES STRUKDAT   
 // SPESIFIKASI 1.a: MLL 1-N dengan:
-// - Record (tipe bentukan): infoArtis
+// - Record (tipe bentukan): infoArtis (nama, genre, tahunDebut)
 // - Array tipe dasar: string* laguArray
 // - Parent: List Artis, Child: Array Lagu
 
@@ -113,8 +113,8 @@ void updateArtisInfo(List &L, const string &nama, const string &genreBaru, int t
         P->info.tahunDebut = tahunBaru;           // Update field record
         cout << "  Info artis '" << nama << "' berhasil diupdate!" << endl;
         
-        // Auto-save ke CSV
-        if (saveToCSV(L, filename)) {
+        // DATABASE: Auto-save ke CSV setelah update
+        if (saveToCSV(L, filename)) {             // KONEKSI: Write dari memory ke file
             cout << "  Data disimpan ke " << filename << endl;
         } else {
             cout << "  Gagal menyimpan ke file!" << endl;
@@ -153,7 +153,7 @@ void insertLagu(adrArtis P, const string &judul, List &L, const string &filename
     P->jumlahLagu++;
     
     cout << "  Lagu '" << judul << "' berhasil ditambahkan!" << endl;
-    saveToCSV(L, filename);
+    saveToCSV(L, filename);                       // DATABASE: Auto-save ke CSV setelah insert lagu
 }
 
 void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename) {
@@ -162,10 +162,16 @@ void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename
         return;
     }
     
+    // Convert input to lowercase for case-insensitive search
+    string judulLower = judul;
+    transform(judulLower.begin(), judulLower.end(), judulLower.begin(), ::tolower);
+    
     // Find song index
     int index = -1;
     for (int i = 0; i < P->jumlahLagu; i++) {
-        if (P->laguArray[i] == judul) {
+        string laguLower = P->laguArray[i];
+        transform(laguLower.begin(), laguLower.end(), laguLower.begin(), ::tolower);
+        if (laguLower == judulLower) {
             index = i;
             break;
         }
@@ -263,7 +269,7 @@ void showAllData(List L) {
         cout << "      Genre  : " << P->info.genre << endl;
         cout << "      Debut  : " << P->info.tahunDebut << endl;
         cout << "      Lagu   : ";
-        
+
         if (P->jumlahLagu == 0) {
             cout << "(kosong)" << endl;
         } else {
@@ -363,20 +369,23 @@ int countTotalArtis(List L) {
     return count;
 }
 
-//  FILE I/O OPERATIONS 
+// ========== DATABASE OPERATIONS (FILE I/O) ==========
+// KONEKSI DATABASE: Fungsi untuk load/baca data dari CSV
 bool loadFromCSV(const string &filename, List &L) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        return false;
+    ifstream file(filename);                      // DATABASE: Buka file CSV untuk dibaca
+    if (!file.is_open()) {                        // DATABASE: Cek apakah file berhasil dibuka
+        return false;                             // File tidak ada = database kosong
     }
     
     string line;
-    while (getline(file, line)) {
+    while (getline(file, line)) {                 // DATABASE: Baca file baris per baris
         if (line.empty()) continue;
         
-        stringstream ss(line);
+        stringstream ss(line);                    // DATABASE: Parse setiap baris CSV
         string nama, genre, tahunStr, judul;
         
+        // DATABASE: Extract data dengan delimiter ';'
+        // Format CSV: nama;genre;tahun;judul_lagu
         if (getline(ss, nama, ';') && 
             getline(ss, genre, ';') && 
             getline(ss, tahunStr, ';') && 
@@ -405,18 +414,21 @@ bool loadFromCSV(const string &filename, List &L) {
     return true;
 }
 
+// KONEKSI DATABASE: Fungsi untuk save/tulis data ke CSV
 bool saveToCSV(List L, const string &filename) {
-    ofstream file(filename);
-    if (!file.is_open()) {
-        return false;
+    ofstream file(filename);                      // DATABASE: Buka file CSV untuk ditulis
+    if (!file.is_open()) {                        // DATABASE: Cek apakah file berhasil dibuka
+        return false;                             // Gagal membuka file untuk write
     }
     
     adrArtis P = L.first;
-    while (P != nullptr) {
+    while (P != nullptr) {                        // DATABASE: Traversal semua artis untuk disimpan
         if (P->jumlahLagu == 0) {
+            // DATABASE: Tulis artis tanpa lagu (format: nama;genre;tahun;Belum Ada Lagu)
             file << P->info.nama << ";" << P->info.genre << ";" 
                  << P->info.tahunDebut << ";Belum Ada Lagu" << endl;
         } else {
+            // DATABASE: Tulis setiap lagu sebagai baris terpisah (format: nama;genre;tahun;lagu)
             for (int i = 0; i < P->jumlahLagu; i++) {
                 file << P->info.nama << ";" << P->info.genre << ";" 
                      << P->info.tahunDebut << ";" << P->laguArray[i] << endl;
