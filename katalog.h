@@ -68,6 +68,8 @@ void deallocateList(List &L);
 // PROTOTYPES DISPLAY 
 void showAllData(List L);                    // READ: Tampil semua data
 void displayMenu();                          // Display main menu with better UI
+void displaySubMenu();                       // Display sub-menu untuk kelola data
+void displaySubMenuHapus();                  // Display sub-menu untuk hapus data
 void showReport(List L);                     // Show system report with statistics
 void exitProgram(const string &filename);   // Exit program with cleanup message
 
@@ -83,25 +85,42 @@ bool saveToCSV(List L, const string &filename);
 int getMenuChoice();
 
 //  UTILITY FUNCTIONS UNTUK UI 
+
 inline void clearScreen() {
     system("cls");
+    // Reset any ANSI colors
+    cout << "\033[0m";
 }
 
 inline void displayHeader(const string &title) {
-    cout << "\n  " << string(60, '-') << endl;
+    cout << "\n  +";
+    for(int i=0; i<60; i++) cout << "=";
+    cout << "+" << endl;
     int padding = (60 - title.length()) / 2;
-    cout << "  " << string(padding, ' ') << title << endl;
-    cout << "  " << string(60, '-') << endl;
+    cout << "  |" << string(padding, ' ');
+    cout << title;
+    cout << string(60 - padding - title.length(), ' ') << "|" << endl;
+    cout << "  +";
+    for(int i=0; i<60; i++) cout << "=";
+    cout << "+";
+    cout << endl;
 }
 
 inline void displaySubHeader(const string &subtitle) {
-    cout << "\n" << string(50, '-') << endl;
-    cout << "  " << subtitle << endl;
-    cout << string(50, '-') << endl;
+    cout << "\n  +";
+    for(int i=0; i<58; i++) cout << "-";
+    cout << "+" << endl;
+    cout << "  | ";
+    cout << subtitle;
+    cout << string(56 - subtitle.length(), ' ') << " |" << endl;
+    cout << "  +";
+    for(int i=0; i<58; i++) cout << "-";
+    cout << "+";
+    cout << endl;
 }
 
 inline void waitForEnter() {
-    cout << "\n  >> Tekan ENTER untuk melanjutkan...";
+    cout << "\n  >>  Tekan ENTER untuk melanjutkan...";
     cin.ignore();
 }
 
@@ -120,7 +139,7 @@ inline string readString(const string &prompt) {
         if (!input.empty()) {
             valid = true;
         } else {
-            cout << "  [ERROR] Input tidak boleh kosong!" << endl;
+            cout << "  ERROR: Input tidak boleh kosong!" << endl;
         }
     }
     return input;
@@ -136,7 +155,7 @@ inline int readInteger(const string &prompt) {
             valid = true;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         } else {
-            cout << "  [ERROR] Input tidak valid! Masukkan angka yang benar." << endl;
+            cout << "  ERROR: Input tidak valid! Masukkan angka yang benar." << endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }

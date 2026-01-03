@@ -5,6 +5,140 @@ Program Katalog Musik adalah aplikasi manajemen data musik berbasis **Multi Link
 
 ---
 
+## 🆕 UPDATE TERBARU - MENU NESTED & FITUR ENHANCEMENT
+
+### **Versi 2.0 - Peningkatan User Experience**
+
+#### ⭐ **PERUBAHAN UTAMA:**
+
+#### 1. **Nested Menu System** (Menu Bertingkat)
+Program sekarang menggunakan **nested menu** untuk organisasi yang lebih baik:
+
+**MENU UTAMA BARU:**
+```
+[1] Kelola Data Artis & Lagu    → Sub-menu untuk tambah data
+[2] Lihat Semua Data Katalog
+[3] Hapus Data Artis & Lagu     → Sub-menu untuk hapus data
+[4] Cari Artis di Katalog
+[5] Lihat Laporan Statistik
+[6] Update Info Artis
+[0] Keluar dari Program
+```
+
+**SUB-MENU 1: KELOLA DATA**
+```
+[1] Tambah Artis Baru
+[2] Tambah Lagu ke Artis Lama
+[0] Kembali ke Menu Utama
+```
+
+**SUB-MENU 3: HAPUS DATA**
+```
+[1] Hapus Lagu dari Artis
+[2] Hapus Artis dari Katalog
+[0] Kembali ke Menu Utama
+```
+
+#### 2. **Logika Khusus Tanda "-" untuk Skip Lagu Pertama**
+Saat menambah artis baru, user bisa:
+- **Ketik judul lagu**: Lagu langsung masuk ke `laguArray[0]`, `jumlahLagu = 1`
+- **Ketik "-"**: Array lagu dibiarkan kosong, `jumlahLagu = 0`
+
+```cpp
+// Contoh implementasi:
+cout << "  Masukkan Lagu Pertama (atau ketik '-' untuk lewati): ";
+getline(cin, judul);
+
+if (judul == "-") {
+    // Array lagu dibiarkan kosong (jumlahLagu = 0)
+    cout << "  Artis ditambahkan tanpa lagu." << endl;
+} else if (!judul.empty()) {
+    // Masukkan lagu ke array
+    newArtis->laguArray[0] = judul;
+    newArtis->jumlahLagu = 1;
+}
+```
+
+#### 3. **Loop Input Lagu Tanpa Batas**
+Di sub-menu "Tambah Lagu ke Artis Lama", user bisa menambahkan lagu **sebanyak apapun** dalam satu sesi:
+
+```
+TAMBAH LAGU (Ketik '0' untuk selesai)
+Judul lagu [1]: Shape of You
+Lagu 'Shape of You' berhasil ditambahkan!
+Judul lagu [2]: Perfect
+Lagu 'Perfect' berhasil ditambahkan!
+Judul lagu [3]: Thinking Out Loud
+Lagu 'Thinking Out Loud' berhasil ditambahkan!
+Judul lagu [4]: 0  ← Ketik 0 untuk selesai
+
+Selesai menambahkan lagu.
+Total lagu untuk 'Ed Sheeran': 3
+```
+
+**Fitur:**
+- Input lagu terus berulang sampai user ketik `"0"`
+- Tidak ada batasan jumlah lagu per sesi
+- Array akan auto-expand jika penuh (5 → 10 → 20 → 40 → ...)
+
+#### 4. **Array Dinamis Auto-Expand** (Sudah Ada Sebelumnya)
+Array lagu menggunakan **dynamic resizing** seperti `std::vector`:
+
+**Mekanisme:**
+```
+Kapasitas Awal: 5
+Lagu ke-6 ditambah → Resize ke kapasitas 10
+Lagu ke-11 ditambah → Resize ke kapasitas 20
+Lagu ke-21 ditambah → Resize ke kapasitas 40
+... dan seterusnya (tidak ada batasan!)
+```
+
+**Implementasi:**
+```cpp
+if (P->jumlahLagu >= P->kapasitas) {
+    // Resize array (double the capacity)
+    int newKapasitas = P->kapasitas * 2;
+    string* newArray = new string[newKapasitas];
+    
+    // Copy existing songs
+    for (int i = 0; i < P->jumlahLagu; i++) {
+        newArray[i] = P->laguArray[i];
+    }
+    
+    // Delete old array and update pointer
+    delete[] P->laguArray;
+    P->laguArray = newArray;
+    P->kapasitas = newKapasitas;
+}
+```
+
+---
+
+### **PERBEDAAN VERSI LAMA vs BARU**
+
+| Aspek | Versi Lama | Versi Baru (2.0) |
+|-------|-----------|------------------|
+| **Menu Structure** | Flat menu (7 pilihan) | Nested menu (3 + sub-menu) |
+| **Tambah Artis & Lagu** | Satu menu gabungan | Terpisah di sub-menu |
+| **Hapus Data** | 2 menu terpisah | 1 menu dengan sub-menu |
+| **Input Lagu Pertama** | Wajib input atau skip manual | Logika khusus tanda "-" |
+| **Tambah Lagu ke Artis** | Input satu-satu, keluar & masuk lagi | Loop terus sampai ketik "0" |
+| **Jumlah Lagu per Sesi** | 1 lagu per eksekusi menu | Unlimited (sampai user ketik 0) |
+| **Kapasitas Array** | Fixed resize (sudah ada) | Fixed resize (tetap sama) |
+| **User Flow** | Kurang terorganisir | Lebih terstruktur & intuitif |
+
+---
+
+### **KEUNTUNGAN UPDATE INI:**
+
+✅ **Organisasi Menu Lebih Baik**: Fitur serupa dikelompokkan dalam sub-menu  
+✅ **User Experience Lebih Smooth**: Bisa input banyak lagu tanpa keluar-masuk menu  
+✅ **Fleksibilitas Tinggi**: Artis bisa dibuat tanpa lagu (pakai "-")  
+✅ **Efisiensi Waktu**: Tidak perlu re-navigate menu berkali-kali  
+✅ **Konsistensi Kode**: Nested menu pattern yang sama untuk kelola & hapus data  
+
+---
+
 ## PEMENUHAN SPESIFIKASI TUGAS BESAR
 
 ### SPESIFIKASI 1.a: Struktur Data MLL 1-N

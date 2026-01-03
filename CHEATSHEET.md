@@ -1,6 +1,364 @@
 # 📋 CHEATSHEET - KATALOG MUSIK (MLL 1-N)
 
-## � STRUKTUR FILE PROJECT
+## 🆕 UPDATE TERBARU v2.0 - NESTED MENU SYSTEM
+
+### ⭐ **APA YANG BERUBAH?**
+
+#### 🔄 **PERUBAHAN 1: Nested Menu (Menu Bertingkat)**
+
+**SEBELUM (Versi Lama):**
+```
+Menu Utama (Flat - 8 pilihan):
+[1] Tambah Artis Baru & Lagu
+[2] Lihat Semua Data Katalog
+[3] Hapus Lagu dari Artis
+[4] Hapus Artis dari Katalog
+[5] Cari Artis di Katalog
+[6] Lihat Laporan Statistik
+[7] Update Info Artis
+[0] Keluar
+```
+
+**SESUDAH (Versi Baru):**
+```
+Menu Utama (Nested - 6 pilihan):
+[1] Kelola Data Artis & Lagu   → SUB-MENU
+    ↳ [1] Tambah Artis Baru
+    ↳ [2] Tambah Lagu ke Artis Lama
+    ↳ [0] Kembali ke Menu Utama
+    
+[2] Lihat Semua Data Katalog
+
+[3] Hapus Data Artis & Lagu    → SUB-MENU
+    ↳ [1] Hapus Lagu dari Artis
+    ↳ [2] Hapus Artis dari Katalog
+    ↳ [0] Kembali ke Menu Utama
+    
+[4] Cari Artis di Katalog
+[5] Lihat Laporan Statistik
+[6] Update Info Artis
+[0] Keluar
+```
+
+**Implementasi di katalog.cpp:**
+```cpp
+// Fungsi baru yang ditambahkan:
+void displaySubMenu() {
+    displaySubHeader("SUB-MENU: KELOLA DATA");
+    cout << "\n  [1] Tambah Artis Baru" << endl;
+    cout << "  [2] Tambah Lagu ke Artis Lama" << endl;
+    cout << "  [0] Kembali ke Menu Utama" << endl;
+    cout << "\n  >> Pilihan: ";
+}
+
+void displaySubMenuHapus() {
+    displaySubHeader("SUB-MENU: HAPUS DATA");
+    cout << "\n  [1] Hapus Lagu dari Artis" << endl;
+    cout << "  [2] Hapus Artis dari Katalog" << endl;
+    cout << "  [0] Kembali ke Menu Utama" << endl;
+    cout << "\n  >> Pilihan: ";
+}
+```
+
+---
+
+#### 🔄 **PERUBAHAN 2: Logika Khusus Tanda "-" untuk Skip Lagu Pertama**
+
+**SEBELUM:**
+```cpp
+// Di menu Tambah Artis:
+// User WAJIB input lagu atau manual skip
+// Tidak ada logika khusus
+```
+
+**SESUDAH:**
+```cpp
+// Di sub-menu [1] Tambah Artis Baru:
+cout << "  Masukkan Lagu Pertama (atau ketik '-' untuk lewati): ";
+getline(cin, judul);
+
+// LOGIKA PENTING: Cek tanda strip "-"
+if (judul == "-") {
+    // Array lagu dibiarkan kosong (jumlahLagu = 0)
+    cout << "\n  Artis ditambahkan tanpa lagu." << endl;
+} else if (!judul.empty()) {
+    // Masukkan lagu ke array
+    newArtis->laguArray[0] = judul;
+    newArtis->jumlahLagu = 1;
+}
+```
+
+**Contoh Output:**
+```
+Masukkan Lagu Pertama (atau ketik '-' untuk lewati): -
+Artis 'Michael Jackson' ditambahkan tanpa lagu.
+```
+
+---
+
+#### 🔄 **PERUBAHAN 3: Loop Input Lagu Tanpa Batas**
+
+**SEBELUM:**
+```cpp
+// Menu [2] Tambah Lagu ke Artis:
+// - User input SATU lagu
+// - Keluar dari menu
+// - Kalau mau tambah lagi, harus masuk menu lagi
+```
+
+**SESUDAH:**
+```cpp
+// Sub-menu [2] Tambah Lagu ke Artis Lama:
+// LOOP sampai user ketik "0"
+while (true) {
+    cout << "  Judul lagu [" << (pFound->jumlahLagu + 1) << "]: ";
+    getline(cin, judul);
+    
+    if (judul == "0") {
+        cout << "\n  Selesai menambahkan lagu." << endl;
+        break;
+    }
+    
+    if (judul.empty()) {
+        cout << "  Input tidak boleh kosong! (Ketik '0' untuk selesai)" << endl;
+        continue;
+    }
+    
+    // Tambahkan lagu (array akan auto-expand jika penuh)
+    insertLagu(pFound, judul, L, filename);
+}
+```
+
+**Contoh Output:**
+```
+TAMBAH LAGU (Ketik '0' untuk selesai)
+Judul lagu [1]: Shape of You
+Lagu 'Shape of You' berhasil ditambahkan!
+Judul lagu [2]: Perfect
+Lagu 'Perfect' berhasil ditambahkan!
+Judul lagu [3]: Thinking Out Loud
+Lagu 'Thinking Out Loud' berhasil ditambahkan!
+Judul lagu [4]: 0
+
+Selesai menambahkan lagu.
+Total lagu untuk 'Ed Sheeran': 3
+```
+
+---
+
+### 📊 **PERBANDINGAN VERSI LAMA vs BARU**
+
+| Aspek | Versi Lama | Versi Baru (v2.0) |
+|-------|-----------|-------------------|
+| **Menu Utama** | 8 menu flat | 6 menu + 2 sub-menu |
+| **Tambah Artis** | Langsung dari menu utama | Dalam sub-menu "Kelola Data" |
+| **Tambah Lagu** | Menu terpisah, 1 lagu per eksekusi | Sub-menu dengan loop unlimited |
+| **Hapus Data** | 2 menu terpisah di utama | 1 menu dengan 2 sub-pilihan |
+| **Lagu Pertama** | Input manual, tidak bisa skip clean | Ketik "-" untuk skip dengan logika |
+| **Jumlah Input Lagu** | 1 lagu → keluar → masuk lagi | Unlimited sampai ketik "0" |
+| **User Flow** | Banyak navigasi berulang | Efisien, semua di dalam sub-menu |
+| **Kode Main.cpp** | Switch-case sederhana | Nested switch-case + loop |
+
+---
+
+### 🔧 **KODE YANG BERUBAH**
+
+#### **File: katalog.h**
+```cpp
+// TAMBAHAN PROTOTYPE:
+void displaySubMenuHapus();  // Sub-menu untuk hapus data
+```
+
+#### **File: katalog.cpp**
+```cpp
+// FUNGSI BARU:
+void displaySubMenuHapus() {
+    displaySubHeader("SUB-MENU: HAPUS DATA");
+    cout << "\n  [1] Hapus Lagu dari Artis" << endl;
+    cout << "  [2] Hapus Artis dari Katalog" << endl;
+    cout << "  [0] Kembali ke Menu Utama" << endl;
+    cout << "\n  >> Pilihan: ";
+}
+
+// FUNGSI DIUPDATE:
+void displayMenu() {
+    displayHeader("*** KATALOG MUSIK DIGITAL ***");
+    cout << "\n  [1] Kelola Data Artis & Lagu" << endl;  // ← BARU
+    cout << "  [2] Lihat Semua Data Katalog" << endl;
+    cout << "  [3] Hapus Data Artis & Lagu" << endl;     // ← BARU
+    cout << "  [4] Cari Artis di Katalog" << endl;
+    cout << "  [5] Lihat Laporan Statistik" << endl;
+    cout << "  [6] Update Info Artis" << endl;
+    cout << "  [0] Keluar dari Program" << endl;
+    cout << "\n  >> Pilihan: ";
+}
+```
+
+#### **File: main.cpp - Case 1 (Nested Menu Kelola Data)**
+```cpp
+case 1: {
+    // SUB-MENU: Kelola Data Artis & Lagu
+    int subPilihan;
+    do {
+        clearScreen();
+        displaySubMenu();
+        subPilihan = readMenuChoice();
+        
+        switch (subPilihan) {
+            case 1: {
+                // Tambah Artis Baru
+                // ... (lihat kode lengkap di main.cpp)
+                
+                // LOGIKA BARU: Tanda "-" untuk skip lagu
+                cout << "  Masukkan Lagu Pertama (atau ketik '-' untuk lewati): ";
+                getline(cin, judul);
+                
+                if (judul == "-") {
+                    cout << "  Artis ditambahkan tanpa lagu." << endl;
+                } else if (!judul.empty()) {
+                    newArtis->laguArray[0] = judul;
+                    newArtis->jumlahLagu = 1;
+                }
+                break;
+            }
+            
+            case 2: {
+                // Tambah Lagu ke Artis Lama
+                // LOGIKA BARU: Loop input lagu
+                while (true) {
+                    cout << "  Judul lagu [" << (pFound->jumlahLagu + 1) << "]: ";
+                    getline(cin, judul);
+                    
+                    if (judul == "0") {
+                        break;
+                    }
+                    
+                    insertLagu(pFound, judul, L, filename);
+                }
+                break;
+            }
+            
+            case 0: {
+                // Kembali ke menu utama
+                break;
+            }
+        }
+        
+        if (subPilihan != 0) {
+            waitForEnter();
+        }
+        
+    } while (subPilihan != 0);
+    break;
+}
+```
+
+#### **File: main.cpp - Case 3 (Nested Menu Hapus Data)**
+```cpp
+case 3: {
+    // SUB-MENU: Hapus Data Artis & Lagu
+    int subPilihan;
+    do {
+        clearScreen();
+        displaySubMenuHapus();
+        subPilihan = readMenuChoice();
+        
+        switch (subPilihan) {
+            case 1: {
+                // Hapus Lagu dari Artis
+                // ... (kode seperti versi lama)
+                break;
+            }
+            
+            case 2: {
+                // Hapus Artis dari Katalog
+                // ... (kode seperti versi lama)
+                break;
+            }
+            
+            case 0: {
+                // Kembali ke menu utama
+                break;
+            }
+        }
+        
+        if (subPilihan != 0) {
+            waitForEnter();
+        }
+        
+    } while (subPilihan != 0);
+    break;
+}
+```
+
+---
+
+### 🎯 **KEUNTUNGAN UPDATE INI**
+
+| Keuntungan | Penjelasan |
+|-----------|------------|
+| **✅ Organisasi Lebih Baik** | Fitur serupa (tambah/hapus) dikelompokkan dalam sub-menu |
+| **✅ User Experience** | User bisa tambah 10, 20, 50 lagu tanpa keluar-masuk menu |
+| **✅ Fleksibilitas** | Artis bisa dibuat tanpa lagu (ketik "-") |
+| **✅ Efisiensi** | Tidak perlu re-navigate menu berkali-kali |
+| **✅ Code Organization** | Nested pattern yang konsisten di semua menu |
+| **✅ Array Unlimited** | Auto-expand tetap bekerja (5→10→20→40...) |
+
+---
+
+### 💡 **TIPS MODIFIKASI LANJUTAN**
+
+#### **Skenario 1: Tambah Validasi di Loop Input Lagu**
+```cpp
+// Contoh: Cek lagu duplikat
+bool isDuplicate = false;
+for (int i = 0; i < pFound->jumlahLagu; i++) {
+    if (pFound->laguArray[i] == judul) {
+        isDuplicate = true;
+        break;
+    }
+}
+
+if (isDuplicate) {
+    cout << "  ERROR: Lagu sudah ada dalam daftar!" << endl;
+    continue; // Skip ke input berikutnya
+}
+```
+
+#### **Skenario 2: Konfirmasi Sebelum Kembali**
+```cpp
+case 0: {
+    char konfirmasi;
+    cout << "  Kembali ke menu utama? (y/n): ";
+    cin >> konfirmasi;
+    cin.ignore();
+    
+    if (konfirmasi == 'y' || konfirmasi == 'Y') {
+        kembali = true;
+    }
+    break;
+}
+```
+
+#### **Skenario 3: Batasi Jumlah Lagu Per Sesi**
+```cpp
+// Di loop input lagu:
+int maxLaguPerSesi = 10;
+int counter = 0;
+
+while (true && counter < maxLaguPerSesi) {
+    // ... input lagu ...
+    counter++;
+}
+
+if (counter >= maxLaguPerSesi) {
+    cout << "  Batas maksimal " << maxLaguPerSesi << " lagu per sesi tercapai!" << endl;
+}
+```
+
+---
+
+## 📂 STRUKTUR FILE PROJECT
 
 ### 1️⃣ **katalog.h** (Header File - 151 baris)
 **Fungsi:** Deklarasi struktur data, prototype fungsi, dan utility functions

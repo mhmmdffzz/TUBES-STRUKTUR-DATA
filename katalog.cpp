@@ -6,8 +6,8 @@
 // - Array tipe dasar: string* laguArray
 // - Parent: List Artis, Child: Array Lagu
 
-//  OPERASI DASAR ELEMENT 
-adrArtis createElementArtis(const string &nama, const string &genre, int tahun) {
+//  OPERASI DASAR ELEMENT   
+adrArtis createElementArtis(const string &nama, const string &genre, int tahun) {  //membuat wadah artis baru
     adrArtis P = new elmArtis;                    // SPESIFIKASI 1.a: Alokasi node MLL
     P->info.nama = nama;                          // Record field 1
     P->info.genre = genre;                        // Record field 2  
@@ -26,19 +26,19 @@ void createList(List &L) {
     L.first = nullptr;                            // SPESIFIKASI 2.a: CREATE - Inisialisasi list
 }
 
-void insertLastArtis(List &L, adrArtis P, const string &filename) {
+void insertLastArtis(List &L, adrArtis   P, const string &filename) {   
     // SPESIFIKASI 2.a: CREATE - Tambah artis baru ke list
-    if (L.first == nullptr) {
+    if (L.first == nullptr) { //check apakah list masih kosong
         L.first = P;
     } else {
-        adrArtis Q = L.first;
+        adrArtis Q = L.first; 
         while (Q->next != nullptr) {              // Traversal ke akhir list
             Q = Q->next;
         }
         Q->next = P;                              // Insert di akhir
     }
     
-    cout << "  Artis '" << P->info.nama << "' ditambahkan" << endl;
+    cout << "  Artis '" << P->info.nama << "' berhasil ditambahkan!" << endl;
     saveToCSV(L, filename);
 }
 
@@ -77,7 +77,7 @@ void deleteArtis(List &L, const string &nama, const string &filename) {
     adrArtis P = searchArtis(L, nama);            // Cari dulu dengan SEARCH
     
     if (P == nullptr) {
-        cout << "  Artis tidak ditemukan" << endl;
+        cout << "  Artis tidak ditemukan!" << endl;
         return;
     }
     
@@ -100,7 +100,7 @@ void deleteArtis(List &L, const string &nama, const string &filename) {
     }
     
     delete P;                                     // Dealokasi node
-    cout << "  Artis '" << nama << "' dihapus" << endl;
+    cout << "  Artis '" << nama << "' berhasil dihapus!" << endl;
     saveToCSV(L, filename);
 }
 
@@ -111,16 +111,16 @@ void updateArtisInfo(List &L, const string &nama, const string &genreBaru, int t
     if (P != nullptr) {
         P->info.genre = genreBaru;                // Update field record
         P->info.tahunDebut = tahunBaru;           // Update field record
-        cout << "  Info artis '" << nama << "' diupdate" << endl;
+        cout << "  Info artis '" << nama << "' berhasil diupdate!" << endl;
         
         // Auto-save ke CSV
         if (saveToCSV(L, filename)) {
             cout << "  Data disimpan ke " << filename << endl;
         } else {
-            cout << "  Gagal menyimpan ke file" << endl;
+            cout << "  Gagal menyimpan ke file!" << endl;
         }
     } else {
-        cout << "  Artis tidak ditemukan" << endl;
+        cout << "  Artis tidak ditemukan!" << endl;
     }
 }
 
@@ -152,13 +152,13 @@ void insertLagu(adrArtis P, const string &judul, List &L, const string &filename
     P->laguArray[P->jumlahLagu] = judul;              // INSERT ke array
     P->jumlahLagu++;
     
-    cout << "  Lagu '" << judul << "' ditambahkan" << endl;
+    cout << "  Lagu '" << judul << "' berhasil ditambahkan!" << endl;
     saveToCSV(L, filename);
 }
 
 void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename) {
     if (P == nullptr || P->jumlahLagu == 0) {
-        cout << "  Lagu tidak ditemukan" << endl;
+        cout << "  Lagu tidak ditemukan!" << endl;
         return;
     }
     
@@ -172,7 +172,7 @@ void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename
     }
     
     if (index == -1) {
-        cout << "  Lagu tidak ditemukan" << endl;
+        cout << "  Lagu tidak ditemukan!" << endl;
         return;
     }
     
@@ -182,7 +182,7 @@ void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename
     }
     
     P->jumlahLagu--;
-    cout << "  Lagu '" << judul << "' dihapus" << endl;
+    cout << "  Lagu '" << judul << "' berhasil dihapus!" << endl;
     saveToCSV(L, filename);
 }
 
@@ -246,7 +246,7 @@ void deallocateList(List &L) {
 
 //  OPERASI DISPLAY 
 void showAllData(List L) {
-    displayHeader("DATA KATALOG MUSIK");
+    displayHeader("*** DATA KATALOG MUSIK ***");
     
     if (L.first == nullptr) {
         cout << "\n  Tidak ada data artis." << endl;
@@ -260,51 +260,64 @@ void showAllData(List L) {
     while (P != nullptr) {
         artistCount++;
         cout << "\n  [" << artistCount << "] " << P->info.nama << endl;
-        cout << "      Genre: " << P->info.genre << endl;
-        cout << "      Debut: " << P->info.tahunDebut << endl;
-        cout << "      Lagu: ";
+        cout << "      Genre  : " << P->info.genre << endl;
+        cout << "      Debut  : " << P->info.tahunDebut << endl;
+        cout << "      Lagu   : ";
         
         if (P->jumlahLagu == 0) {
             cout << "(kosong)" << endl;
         } else {
-            cout << endl;
+            cout << "(" << P->jumlahLagu << " lagu)" << endl;
             for (int i = 0; i < P->jumlahLagu; i++) {
-                cout << "        + " << P->laguArray[i] << endl;
+                cout << "         - " << P->laguArray[i] << endl;
                 totalSongs++;
             }
         }
-        cout << endl;
         P = P->next;
     }
     
-    cout << "  Total: " << artistCount << " artis, " << totalSongs << " lagu" << endl;
+    cout << "\n  Total: " << artistCount << " artis, " << totalSongs << " lagu" << endl;
 }
 
 void displayMenu() {
-    displayHeader("KATALOG MUSIK DIGITAL");
-    cout << "\n  [1] Tambah Artis Baru ke Katalog" << endl;
-    cout << "  [2] Tambah Lagu ke Artis" << endl;
-    cout << "  [3] Lihat Semua Data Katalog" << endl;
-    cout << "  [4] Hapus Lagu dari Artis" << endl;
-    cout << "  [5] Hapus Artis dari Katalog" << endl;
-    cout << "  [6] Cari Artis di Katalog" << endl;
-    cout << "  [7] Lihat Laporan Statistik" << endl;
-    cout << "  [8] Update Info Artis" << endl;
+    displayHeader("*** KATALOG MUSIK DIGITAL ***");
+    cout << "\n  [1] Kelola Data Artis & Lagu" << endl;
+    cout << "  [2] Lihat Semua Data Katalog" << endl;
+    cout << "  [3] Hapus Data Artis & Lagu" << endl;
+    cout << "  [4] Cari Artis di Katalog" << endl;
+    cout << "  [5] Lihat Laporan Statistik" << endl;
+    cout << "  [6] Update Info Artis" << endl;
     cout << "  [0] Keluar dari Program" << endl;
-    cout << "\n  Pilihan: ";
+    cout << "\n  >> Pilihan: ";
+}
+
+void displaySubMenu() {
+    displaySubHeader("SUB-MENU: KELOLA DATA");
+    cout << "\n  [1] Tambah Artis Baru" << endl;
+    cout << "  [2] Tambah Lagu ke Artis Lama" << endl;
+    cout << "  [0] Kembali ke Menu Utama" << endl;
+    cout << "\n  >> Pilihan: ";
+}
+
+void displaySubMenuHapus() {
+    displaySubHeader("SUB-MENU: HAPUS DATA");
+    cout << "\n  [1] Hapus Lagu dari Artis" << endl;
+    cout << "  [2] Hapus Artis dari Katalog" << endl;
+    cout << "  [0] Kembali ke Menu Utama" << endl;
+    cout << "\n  >> Pilihan: ";
 }
 
 void showReport(List L) {
-    displayHeader("LAPORAN SISTEM KATALOG MUSIK");
+    displayHeader("*** LAPORAN SISTEM KATALOG MUSIK ***");
     
     int totalArtis = countTotalArtis(L);
     int totalLagu = countTotalLagu(L);
     
-    cout << "\n  Statistik:" << endl;
-    cout << "  + Artis: " << totalArtis << endl;
-    cout << "  + Lagu: " << totalLagu << endl;
+    cout << "\n  STATISTIK GLOBAL" << endl;
+    cout << "  Total Artis: " << totalArtis << endl;
+    cout << "  Total Lagu : " << totalLagu << endl;
     
-    cout << "\n  Detail per artis:" << endl;
+    cout << "\n  DETAIL PER ARTIS" << endl;
     
     if (L.first == nullptr) {
         cout << "  (tidak ada data)" << endl;
@@ -317,15 +330,12 @@ void showReport(List L) {
             counter++;
         }
     }
-    
-    cout << "  " << string(20, '-') << endl;
 }
 
 void exitProgram(const string &filename) {
-    displayHeader("TERIMA KASIH");
-    cout << "\n  Data disimpan: " << filename << endl;
-    cout << "  Sampai jumpa!" << endl;
-    cout << "  " << string(20, '-') << endl;
+    displayHeader("*** TERIMA KASIH ***");
+    cout << "\n  Data berhasil disimpan: " << filename << endl;
+    cout << "  Sampai jumpa lagi!" << endl;
 }
 
 // SPESIFIKASI 2.b: PENGOLAHAN MLL 
