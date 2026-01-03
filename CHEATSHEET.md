@@ -989,6 +989,365 @@ getline(ss, negara, ','); // <--- TAMBAH INI
 
 ---
 
+### Skenario 5️⃣: "Cari Artis Paling Produktif"
+
+**Permintaan Dosen:**
+> "Mas, saya penasaran siapa artis yang paling rajin bikin lagu (jumlah lagunya paling banyak). Tolong buatkan satu menu kecil atau fungsi untuk menampilkan satu nama artis dengan lagu terbanyak."
+
+**Analisa:** Kamu butuh algoritma **Maximum Value Search**. Kamu harus looping dari awal sampai akhir, sambil memegang satu variabel penampung "Juara Sementara".
+
+**Kunci Jawaban:**
+```cpp
+void showMostProductive(List L) {
+    if (L.first == nullptr) {
+        cout << "Data Kosong." << endl;
+        return;
+    }
+
+    adrArtis P = L.first;
+    adrArtis Juara = L.first; // Anggap orang pertama itu juara sementara
+
+    while (P != nullptr) {
+        // Jika nemu yang lagunya lebih banyak dari Juara saat ini
+        if (P->jumlahLagu > Juara->jumlahLagu) {
+            Juara = P; // Pemenang diganti
+        }
+        P = P->next;
+    }
+
+    cout << "Artis Terajin: " << Juara->info.nama 
+         << " (" << Juara->jumlahLagu << " lagu)" << endl;
+}
+```
+
+**Cara Implementasi:**
+1. Tambahkan prototype di `katalog.h`: `void showMostProductive(List L);`
+2. Implementasi fungsi di `katalog.cpp`
+3. Tambahkan menu baru di `main.cpp` atau panggil dari menu statistik
+
+---
+
+### Skenario 6️⃣: "Hapus Lagu Terakhir (Undo)"
+
+**Permintaan Asisten:**
+> "Mas, kalau saya salah input lagu ke-5, masa saya harus hapus artisnya? Tolong buatkan fitur untuk menghapus hanya lagu terakhir yang baru saja dimasukkan ke artis tertentu."
+
+**Analisa:** Ini jebakan. Kamu **TIDAK PERLU** menghapus string-nya dari memori array secara fisik. Kamu cukup mengurangi counter `jumlahLagu`. Data lama akan tertimpa sendiri kalau nanti ada input baru.
+
+**Kunci Jawaban:**
+```cpp
+void deleteLastSong(adrArtis P, List &L, const string &filename) {
+    if (P == nullptr) {
+        cout << "Artis tidak valid." << endl;
+        return;
+    }
+    
+    if (P->jumlahLagu > 0) {
+        // CUKUP KURANGI COUNTERNYA
+        P->jumlahLagu--; 
+        
+        cout << "Lagu terakhir berhasil dihapus (di-undo)." << endl;
+        cout << "Jumlah lagu sekarang: " << P->jumlahLagu << endl;
+        
+        // Secara teknis datanya masih ada di array, 
+        // tapi tidak akan tampil karena loop tampilan dibatasi 'jumlahLagu'
+        saveToCSV(L, filename); // Save perubahan
+    } else {
+        cout << "Artis ini belum punya lagu." << endl;
+    }
+}
+```
+
+**Cara Pakai:**
+```cpp
+// Di main.cpp, tambah menu baru:
+case X: {
+    clearScreen();
+    displayHeader("UNDO LAGU TERAKHIR");
+    nama = readString("  Nama artis: ");
+    pFound = searchArtis(L, nama);
+    
+    if (pFound != nullptr) {
+        deleteLastSong(pFound, L, filename);
+    } else {
+        cout << "  Artis tidak ditemukan!" << endl;
+    }
+    break;
+}
+```
+
+---
+
+### Skenario 7️⃣: "Insert After (Sisip Tengah)"
+
+**Permintaan Dosen:**
+> "Mas, InsertLast itu biasa. Saya mau kalau nambah Artis baru, posisinya harus setelah Artis yang saya tentukan. Misal: Masukkan 'Tulus' setelah 'Noah'."
+
+**Analisa:** Ini mainan **Pointer Next**. Kamu perlu pointer `P` (Artis Baru) dan `Prec` (Artis Sebelumnya/Predecessor).
+
+**Kunci Jawaban:**
+```cpp
+void insertAfterArtis(List &L, adrArtis Prec, adrArtis P, const string &filename) {
+    if (Prec == nullptr || P == nullptr) {
+        cout << "Pointer tidak valid!" << endl;
+        return;
+    }
+    
+    // Logika: P disambung ke kanannya Prec, baru Prec disambung ke P
+    P->next = Prec->next;
+    Prec->next = P;
+    
+    cout << "Artis '" << P->info.nama << "' berhasil disisipkan setelah '" 
+         << Prec->info.nama << "'" << endl;
+    saveToCSV(L, filename);
+}
+```
+
+**Cara Panggil di Main:**
+```cpp
+// Contoh penggunaan:
+// 1. Buat P (createElementArtis) -> 'Tulus'
+adrArtis newArtis = createElementArtis("Tulus", "Pop", 2011);
+
+// 2. Cari Prec (searchArtis) -> 'Noah'
+adrArtis predecessor = searchArtis(L, "Noah");
+
+if (predecessor != nullptr) {
+    // 3. insertAfterArtis(L, Prec, P, filename);
+    insertAfterArtis(L, predecessor, newArtis, filename);
+} else {
+    cout << "Artis 'Noah' tidak ditemukan!" << endl;
+}
+```
+
+---
+
+### Skenario 8️⃣: "Rename Artis (Update Data)"
+
+**Permintaan Asisten:**
+> "Mas, ini nama artisnya typo. 'Noah' ditulis 'Noak'. Saya gak mau hapus dan bikin ulang karena lagunya udah banyak. Bikin fitur Ganti Nama Artis dong."
+
+**Analisa:** Ini sangat simpel tapi sering bikin panik. Kamu cuma butuh **Search** lalu **Assign** nilai baru. Tidak perlu ubah pointer.
+
+**Kunci Jawaban:**
+```cpp
+void updateNamaArtis(List L, const string &namaLama, const string &namaBaru, const string &filename) {
+    adrArtis P = searchArtis(L, namaLama);
+    
+    if (P != nullptr) {
+        P->info.nama = namaBaru; // <--- CUMA INI KUNCINYA
+        cout << "Nama berhasil diubah dari '" << namaLama 
+             << "' menjadi '" << namaBaru << "'" << endl;
+        saveToCSV(L, filename);
+    } else {
+        cout << "Artis '" << namaLama << "' tidak ditemukan." << endl;
+    }
+}
+```
+
+**Implementasi di Menu:**
+```cpp
+case X: {
+    clearScreen();
+    displayHeader("RENAME ARTIS");
+    string namaLama = readString("  Nama artis saat ini: ");
+    string namaBaru = readString("  Nama baru: ");
+    
+    updateNamaArtis(L, namaLama, namaBaru, filename);
+    break;
+}
+```
+
+---
+
+### Skenario 9️⃣: "Validasi Lagu Kembar (Anti Duplikat)"
+
+**Permintaan Dosen:**
+> "Mas, coba lihat array lagumu. Kalau saya input lagu 'Separuh Aku' dua kali ke artis 'Noah', dia mau masuk kan? Itu bug. Tolong cegah lagu kembar dalam satu artis."
+
+**Analisa:** Sebelum baris `P->laguArray[P->jumlahLagu] = judul`, kamu harus melakukan **Looping kecil** (Sequential Search) di dalam array si Artis itu.
+
+**Kunci Jawaban - Modifikasi di fungsi insertLagu:**
+```cpp
+void insertLagu(adrArtis P, const string &judul, List &L, const string &filename) {
+    if (P == nullptr) return;
+    
+    // CEK DUPLIKASI DULU
+    for (int i = 0; i < P->jumlahLagu; i++) {
+        if (P->laguArray[i] == judul) {
+            cout << "  [ERROR] Lagu '" << judul << "' sudah ada! Gagal menambahkan." << endl;
+            return; // Langsung keluar fungsi
+        }
+    }
+
+    // Check if array needs to be resized
+    if (P->jumlahLagu >= P->kapasitas) {
+        int newKapasitas = P->kapasitas * 2;
+        string* newArray = new string[newKapasitas];
+        
+        for (int i = 0; i < P->jumlahLagu; i++) {
+            newArray[i] = P->laguArray[i];
+        }
+        
+        delete[] P->laguArray;
+        P->laguArray = newArray;
+        P->kapasitas = newKapasitas;
+    }
+    
+    // Kalau lolos validasi duplikasi, baru masukkan
+    P->laguArray[P->jumlahLagu] = judul;
+    P->jumlahLagu++;
+    
+    cout << "  Lagu '" << judul << "' berhasil ditambahkan!" << endl;
+    saveToCSV(L, filename);
+}
+```
+
+**Penjelasan:**
+- Loop `for` dari `i = 0` sampai `i < P->jumlahLagu`
+- Jika ada yang sama, langsung `return` (keluar dari fungsi)
+- Jika lolos semua pengecekan, baru data masuk ke array
+
+---
+
+### Skenario 🔟: "Reset Lagu (Clear Array)"
+
+**Permintaan Asisten:**
+> "Mas, artis ini pindah label rekaman. Semua lagunya ditarik. Saya mau hapus SEMUA lagunya si artis itu, tapi Artisnya jangan dihapus dari list. Jadi jumlah lagunya balik jadi 0."
+
+**Analisa:** Kamu harus me-reset counter `jumlahLagu` jadi 0. Untuk nilai plus, kamu bisa melakukan **dealokasi array lama** dan buat array baru (biar bersih memori), tapi mereset counter saja seringkali sudah cukup diterima.
+
+**Kunci Jawaban:**
+```cpp
+void clearLaguArtis(adrArtis P, List &L, const string &filename) {
+    if (P == nullptr) {
+        cout << "Artis tidak valid!" << endl;
+        return;
+    }
+    
+    // Cara PRO (Bersih Memori):
+    delete[] P->laguArray;        // Hancurkan array lama
+    P->laguArray = new string[5]; // Bikin wadah baru yang fresh
+    P->kapasitas = 5;
+    P->jumlahLagu = 0;            // Reset hitungan
+    
+    cout << "Semua lagu milik '" << P->info.nama << "' telah dihapus." << endl;
+    cout << "Artis tetap ada dalam katalog dengan 0 lagu." << endl;
+    saveToCSV(L, filename);
+}
+```
+
+**Cara Pakai di Menu:**
+```cpp
+case X: {
+    clearScreen();
+    displayHeader("RESET SEMUA LAGU ARTIS");
+    nama = readString("  Nama artis: ");
+    pFound = searchArtis(L, nama);
+    
+    if (pFound != nullptr) {
+        char konfirmasi;
+        cout << "\n  PERINGATAN: Semua lagu akan dihapus!" << endl;
+        cout << "  Lanjutkan? (y/n): ";
+        cin >> konfirmasi;
+        cin.ignore();
+        
+        if (konfirmasi == 'y' || konfirmasi == 'Y') {
+            clearLaguArtis(pFound, L, filename);
+        } else {
+            cout << "  Operasi dibatalkan." << endl;
+        }
+    } else {
+        cout << "  Artis tidak ditemukan!" << endl;
+    }
+    break;
+}
+```
+
+---
+
+### Skenario 1️⃣1️⃣: "Tampilkan Hanya Artis Kosong"
+
+**Permintaan Dosen:**
+> "Saya mau bersih-bersih data. Coba tampilkan Artis mana saja yang TIDAK PUNYA lagu sama sekali (lagunya 0), biar nanti saya hapus."
+
+**Analisa:** Mirip skenario filter tahun debut, tapi kondisinya mengecek `jumlahLagu`.
+
+**Kunci Jawaban:**
+```cpp
+void showEmptyArtis(List L) {
+    adrArtis P = L.first;
+    bool ada = false;
+    int counter = 0;
+
+    displayHeader("DAFTAR ARTIS TANPA LAGU");
+    
+    while (P != nullptr) {
+        // LOGIKA FILTER:
+        if (P->jumlahLagu == 0) {
+            counter++;
+            cout << "  " << counter << ". " << P->info.nama 
+                 << " (Genre: " << P->info.genre 
+                 << ", Debut: " << P->info.tahunDebut << ")" << endl;
+            ada = true;
+        }
+        P = P->next;
+    }
+    
+    if (!ada) {
+        cout << "\n  Tidak ada artis kosong. Semua artis punya lagu!" << endl;
+    } else {
+        cout << "\n  Total artis tanpa lagu: " << counter << endl;
+    }
+}
+```
+
+**Implementasi di Menu:**
+```cpp
+case X: {
+    clearScreen();
+    showEmptyArtis(L);
+    break;
+}
+```
+
+**Bonus - Hapus Semua Artis Kosong:**
+```cpp
+void deleteAllEmptyArtis(List &L, const string &filename) {
+    adrArtis P = L.first;
+    adrArtis prev = nullptr;
+    int deleted = 0;
+    
+    while (P != nullptr) {
+        if (P->jumlahLagu == 0) {
+            adrArtis temp = P;
+            
+            // Update link
+            if (prev == nullptr) {
+                L.first = P->next;
+                P = L.first;
+            } else {
+                prev->next = P->next;
+                P = P->next;
+            }
+            
+            // Delete node
+            delete[] temp->laguArray;
+            delete temp;
+            deleted++;
+        } else {
+            prev = P;
+            P = P->next;
+        }
+    }
+    
+    cout << "Berhasil menghapus " << deleted << " artis kosong." << endl;
+    saveToCSV(L, filename);
+}
+```
+
+---
+
 ## 💡 TIPS MENGHADAPI SKENARIO DOSEN
 
 | Tipe Modifikasi | File yang Berubah | Tingkat Kesulitan |
@@ -997,6 +1356,10 @@ getline(ss, negara, ','); // <--- TAMBAH INI
 | Filter data tampilan | katalog.cpp (showAllData) | ⭐ |
 | Batasi kapasitas array | katalog.cpp (insertLagu) | ⭐⭐ |
 | Tambah field struct | katalog.h + katalog.cpp + main.cpp | ⭐⭐⭐⭐ |
+| Maximum/Minimum search | katalog.cpp | ⭐⭐ |
+| Validasi duplikat | katalog.cpp (insertLagu) | ⭐⭐ |
+| Insert After/Before | katalog.cpp | ⭐⭐⭐ |
+| Clear/Reset data | katalog.cpp | ⭐⭐ |
 
 **Prinsip Emas:**
 1. **Pahami struktur data** → Tahu dimana data disimpan
