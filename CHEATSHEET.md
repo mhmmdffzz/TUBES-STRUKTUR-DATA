@@ -431,5 +431,222 @@ delete p;                       // Dealokasi node
 
 ---
 
-**Last Updated:** January 2, 2026  
+## 🎯 SKENARIO MODIFIKASI DOSEN
+
+### Skenario 1️⃣: "Ubah Posisi Masuk (Insert First)"
+
+**Permintaan Dosen:**
+> "Mas Hanif, ini insertLastArtis kan masukin datanya ke belakang terus. Saya mau Artis yang baru diinput langsung jadi urutan nomor 1 (Masuk Depan). Ubah kodingannya sekarang."
+
+**Analisa:** Kamu harus mengubah logika dari "Looping sampai ujung" menjadi "Langsung tembak depan".
+
+**Langkah:**
+1. Buka [katalog.cpp](katalog.cpp)
+2. Cari fungsi `void insertLastArtis`
+3. HAPUS/KOMENTAR semua logika `while` yang panjang itu
+4. Ganti dengan logika Insert First yang simpel
+
+**Kunci Jawaban:**
+```cpp
+void insertLastArtis(List &L, adrArtis P, const string &filename) {
+    // LOGIKA LAMA (MATIKAN INI):
+    /*
+    if (L.first == nullptr) {
+        L.first = P;
+    } else {
+        adrArtis Q = L.first;
+        while (Q->next != nullptr) {
+            Q = Q->next;
+        }
+        Q->next = P;
+    }
+    */
+
+    // GANTI JADI INI (INSERT FIRST):
+    P->next = L.first; // 1. Sambungkan P ke node pertama lama
+    L.first = P;       // 2. Pindahkan bendera First ke P
+    
+    cout << "  Artis '" << P->info.nama << "' ditambahkan di DEPAN" << endl;
+    saveToCSV(L, filename);
+}
+```
+
+---
+
+### Skenario 2️⃣: "Filter Tampilan (Hanya Artis Senior)"
+
+**Permintaan Dosen:**
+> "Mas, di menu 'Lihat Semua Data', saya pusing liatnya kebanyakan. Tolong tampilkan CUMA artis yang debut sebelum tahun 2000."
+
+**Analisa:** Kamu tidak perlu hapus data, cuma memfilter apa yang di-cout.
+
+**Langkah:**
+1. Buka [katalog.cpp](katalog.cpp)
+2. Cari fungsi `void showAllData`
+3. Lihat loop `while (P != nullptr)`
+4. Selipkan `if` sebelum melakukan `cout`
+
+**Kunci Jawaban:**
+```cpp
+void showAllData(List L) {
+    // ... (kode header) ...
+    adrArtis P = L.first;
+    while (P != nullptr) {
+        // TAMBAHKAN IF INI:
+        if (P->info.tahunDebut < 2000) {  // <--- KUNCINYA DISINI
+            
+            // Masukkan semua kodingan cout di dalam kurung kurawal if ini
+            artistCount++;
+            cout << "\n  [" << artistCount << "] " << P->info.nama << endl;
+            cout << "     Genre: " << P->info.genre << endl;
+            cout << "     Tahun Debut: " << P->info.tahunDebut << endl;
+            // ... dst ...
+        }
+        
+        P = P->next; // P->next WAJIB DI LUAR IF, biar loop jalan terus
+    }
+    // ...
+}
+```
+
+---
+
+### Skenario 3️⃣: "Batasi Jumlah Lagu (Array Logic)"
+
+**Permintaan Dosen:**
+> "Mas, ini lagu kok bisa nambah terus sampai ribuan (resize)? Saya mau hemat memori. Ubah kodingannya: Maksimal 1 artis cuma boleh punya 5 lagu. Kalau user input lagu ke-6, tolak!"
+
+**Analisa:** Ini menyerang kelemahan Dynamic Array kamu. Dosen minta logika resize-nya dimatikan.
+
+**Langkah:**
+1. Buka [katalog.cpp](katalog.cpp)
+2. Cari fungsi `void insertLagu`
+3. Lihat bagian `if (P->jumlahLagu >= P->kapasitas)` → Itu logika resize
+4. Matikan resize, ganti dengan logika batas
+
+**Kunci Jawaban:**
+```cpp
+void insertLagu(adrArtis P, const string &judul, List &L, const string &filename) {
+    if (P == nullptr) return;
+
+    // LOGIKA LAMA (RESIZE) - MATIKAN INI:
+    /*
+    if (P->jumlahLagu >= P->kapasitas) {
+       // ... kode resize panjang ...
+    }
+    */
+
+    // GANTI JADI LOGIKA BATAS (FIXED):
+    if (P->jumlahLagu >= 5) { // Atau pakai P->kapasitas
+        cout << "  [ERROR] Memori Penuh! Maksimal 5 lagu." << endl;
+        return; // Stop fungsi, jangan lanjut
+    }
+
+    // Lanjut ke bawah (P->laguArray[P->jumlahLagu] = judul; ...)
+    P->laguArray[P->jumlahLagu] = judul;
+    P->jumlahLagu++;
+    cout << "  Lagu '" << judul << "' ditambahkan" << endl;
+    saveToCSV(L, filename);
+}
+```
+
+---
+
+### Skenario 4️⃣: "Tambah Data Negara (Modifikasi Struct)"
+
+**Permintaan Dosen:**
+> "Tambahkan data 'Negara Asal' untuk setiap artis. Ubah struct, input, dan tampilannya."
+
+**Analisa:** Ini paling capek karena harus ubah 3 file (.h, .cpp, main). Tapi logikanya gampang.
+
+**Langkah (Ikuti urutan ini biar gak error):**
+
+**1. Buka [katalog.h](katalog.h) (Struct):**
+```cpp
+struct infoArtis {
+    string nama;
+    string genre;
+    int tahunDebut;
+    string negara; // <--- TAMBAH INI
+};
+```
+
+**2. Buka [katalog.cpp](katalog.cpp) (Create Element):**
+- Ubah parameter fungsi: `createElementArtis(..., int tahun, string negara)`
+- Di dalam fungsi tambah: `P->info.negara = negara;`
+
+```cpp
+adrArtis createElementArtis(string nama, string genre, int tahun, string negara) {
+    adrArtis P = new elmArtis;
+    P->info.nama = nama;
+    P->info.genre = genre;
+    P->info.tahunDebut = tahun;
+    P->info.negara = negara; // <--- TAMBAH INI
+    P->next = nullptr;
+    P->laguArray = new string[100];
+    P->jumlahLagu = 0;
+    P->kapasitas = 100;
+    return P;
+}
+```
+
+**3. Buka [main.cpp](main.cpp) (Menu 1):**
+```cpp
+// Di case 1:
+nama = readString("  Nama: ");
+genre = readString("  Genre: ");
+string negara = readString("  Negara: "); // <--- TAMBAH INPUT
+tahun = readInteger("  Tahun debut: ");
+
+// Masukkan ke parameter
+insertLastArtis(L, createElementArtis(nama, genre, tahun, negara), filename);
+```
+
+**4. Buka [katalog.cpp](katalog.cpp) (Show Data):**
+- Tambahkan cout negara di fungsi `showAllData`:
+
+```cpp
+void showAllData(List L) {
+    // ...
+    while (P != nullptr) {
+        artistCount++;
+        cout << "\n  [" << artistCount << "] " << P->info.nama << endl;
+        cout << "     Genre: " << P->info.genre << endl;
+        cout << "     Tahun Debut: " << P->info.tahunDebut << endl;
+        cout << "     Negara: " << P->info.negara << endl; // <--- TAMBAH INI
+        // ...
+    }
+}
+```
+
+**5. Update CSV Loading:**
+- Di `loadFromCSV()`, tambah parsing untuk negara:
+```cpp
+// Parsing line → tambahkan getline untuk negara
+getline(ss, nama, ',');
+getline(ss, genre, ',');
+ss >> tahun; ss.ignore();
+getline(ss, negara, ','); // <--- TAMBAH INI
+```
+
+---
+
+## 💡 TIPS MENGHADAPI SKENARIO DOSEN
+
+| Tipe Modifikasi | File yang Berubah | Tingkat Kesulitan |
+|----------------|-------------------|-------------------|
+| Ubah logika insert/delete | katalog.cpp | ⭐⭐ |
+| Filter data tampilan | katalog.cpp (showAllData) | ⭐ |
+| Batasi kapasitas array | katalog.cpp (insertLagu) | ⭐⭐ |
+| Tambah field struct | katalog.h + katalog.cpp + main.cpp | ⭐⭐⭐⭐ |
+
+**Prinsip Emas:**
+1. **Pahami struktur data** → Tahu dimana data disimpan
+2. **Trace alur fungsi** → Tahu fungsi mana yang dipanggil
+3. **Test step by step** → Jangan langsung run semua
+4. **Backup sebelum ubah** → Copy file dulu sebelum modif
+
+---
+
+**Last Updated:** January 3, 2026  
 **Structure:** Multi-Linked List (MLL) 1-N with Dynamic Array
