@@ -24,7 +24,7 @@ int main() {
 
     do {
         clearScreen();
-        displayMenu();                                // Improved menu display
+        displayMenu();                               
 
         pilihan = readMenuChoice();
 
@@ -38,23 +38,23 @@ int main() {
                     subPilihan = readMenuChoice();
                     
                     switch (subPilihan) {
-                        case 1: {
-                            // SPESIFIKASI 2.a: CRUD - CREATE Artis Baru
-                            clearScreen();
-                            displayHeader("TAMBAH ARTIS BARU");
-                            
-                            // Input nama artis
-                            nama = readString("  Nama artis: ");
-                            
-                            // VERIFIKASI: Cek apakah artis sudah ada
-                            adrArtis cekArtis = searchArtis(L, nama);
-                            
-                            if (cekArtis != nullptr) {
-                                cout << "\n  [!] ERROR: Artis '" << nama << "' sudah ada dalam katalog!" << endl;
-                                break;
-                            }
-                            
-                            // Artis belum ada, buat artis baru
+                            case 1: {
+                                // SPESIFIKASI 2.a: CRUD - CREATE Artis Baru
+                                clearScreen();
+                                displayHeader("TAMBAH ARTIS BARU");
+                                
+                                // Input nama artis
+                                nama = readString("  Nama artis: ");
+                                
+                                // VERIFIKASI: Cek apakah artis sudah ada
+                                adrArtis cekArtis = searchArtis(L, nama);
+                                
+                                if (cekArtis != nullptr) {
+                                    cout << "\n  [!] ERROR: Artis '" << nama << "' sudah ada dalam katalog!" << endl;
+                                    break;
+                                }
+                                
+                            // kalau artis belum ada, lanjut input data lain
                             genre = readString("  Genre: ");
                             tahun = readInteger("  Tahun debut: ");
                             
@@ -102,7 +102,7 @@ int main() {
                                 cout << "\n  [DITEMUKAN]" << endl;
                                 cout << "  Artis: " << pFound->info.nama << endl;
                                 cout << "  Genre: " << pFound->info.genre << endl;
-                                cout << "  Jumlah lagu saat ini: " << pFound->jumlahLagu << "/" << pFound->kapasitas << endl;
+                                cout << "  Jumlah lagu saat ini: " << pFound->jumlahLagu << endl;
                                 
                                 // Loop tambah lagu sampai user ketik 0
                                 cout << "\n  TAMBAH LAGU (Ketik '0' untuk selesai)" << endl;
