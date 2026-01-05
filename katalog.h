@@ -131,7 +131,7 @@ inline string readString(const string &prompt) {
     while (!valid) {
         cout << prompt;
         getline(cin, input);
-        
+
         // Trim whitespace
         input.erase(0, input.find_first_not_of(" \t\n\r\f\v"));
         input.erase(input.find_last_not_of(" \t\n\r\f\v") + 1);

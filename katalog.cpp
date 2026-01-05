@@ -1,6 +1,6 @@
 #include "katalog.h"
 
-//   IMPLEMENTASI SPESIFIKASI TUBES STRUKDAT   
+//  IMPLEMENTASI SPESIFIKASI TUBES STRUKDAT   
 // SPESIFIKASI 1.a: MLL 1-N dengan:
 // - Record (tipe bentukan): infoArtis (nama, genre, tahunDebut)
 // - Array tipe dasar: string* laguArray
@@ -20,6 +20,7 @@ adrArtis createElementArtis(const string &nama, const string &genre, int tahun) 
 }
 
 // SPESIFIKASI 2.a: CRUD + SEARCH
+
 
 //  OPERASI CREATE 
 void createList(List &L) {

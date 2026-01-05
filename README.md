@@ -1,103 +1,14 @@
-# KATALOG MUSIK DIGITAL
+# 📚 TUGAS BESAR STRUKTUR DATA - KATALOG MUSIK DIGITAL
 
-## Deskripsi Program
-Program Katalog Musik adalah aplikasi manajemen data musik berbasis **Multi Linked List (MLL) 1-N** yang diimplementasikan dengan C++ sesuai spesifikasi Tugas Besar Struktur Data. Program ini memungkinkan pengelolaan data artis dan lagu-lagunya dengan database CSV.
+## 📋 IDENTITAS PROGRAM
+**Topik**: Manajemen Katalog Musik (Artis & Lagu)  
+**Struktur Data**: Multi Linked List (MLL) 1-N  
+**Bahasa Pemrograman**: C++  
+**Database**: CSV File (music_db.csv)
 
 ---
 
-## 🆕 UPDATE TERBARU - MENU NESTED & FITUR ENHANCEMENT
-
-### **Versi 2.0 - Peningkatan User Experience**
-
-#### ⭐ **PERUBAHAN UTAMA:**
-
-#### 1. **Nested Menu System** (Menu Bertingkat)
-Program sekarang menggunakan **nested menu** untuk organisasi yang lebih baik:
-
-**MENU UTAMA BARU:**
-```
-[1] Kelola Data Artis & Lagu    → Sub-menu untuk tambah data
-[2] Lihat Semua Data Katalog
-[3] Hapus Data Artis & Lagu     → Sub-menu untuk hapus data
-[4] Cari Artis di Katalog
-[5] Lihat Laporan Statistik
-[6] Update Info Artis
-[0] Keluar dari Program
-```
-
-**SUB-MENU 1: KELOLA DATA**
-```
-[1] Tambah Artis Baru
-[2] Tambah Lagu ke Artis Lama
-[0] Kembali ke Menu Utama
-```
-
-**SUB-MENU 3: HAPUS DATA**
-```
-[1] Hapus Lagu dari Artis
-[2] Hapus Artis dari Katalog
-[0] Kembali ke Menu Utama
-```
-
-#### 2. **Logika Khusus Tanda "-" untuk Skip Lagu Pertama**
-Saat menambah artis baru, user bisa:
-- **Ketik judul lagu**: Lagu langsung masuk ke `laguArray[0]`, `jumlahLagu = 1`
-- **Ketik "-"**: Array lagu dibiarkan kosong, `jumlahLagu = 0`
-
-```cpp
-// Contoh implementasi:
-cout << "  Masukkan Lagu Pertama (atau ketik '-' untuk lewati): ";
-getline(cin, judul);
-
-if (judul == "-") {
-    // Array lagu dibiarkan kosong (jumlahLagu = 0)
-    cout << "  Artis ditambahkan tanpa lagu." << endl;
-} else if (!judul.empty()) {
-    // Masukkan lagu ke array
-    newArtis->laguArray[0] = judul;
-    newArtis->jumlahLagu = 1;
-}
-```
-
-#### 3. **Loop Input Lagu Tanpa Batas**
-Di sub-menu "Tambah Lagu ke Artis Lama", user bisa menambahkan lagu **sebanyak apapun** dalam satu sesi:
-
-```
-TAMBAH LAGU (Ketik '0' untuk selesai)
-Judul lagu [1]: Shape of You
-Lagu 'Shape of You' berhasil ditambahkan!
-Judul lagu [2]: Perfect
-Lagu 'Perfect' berhasil ditambahkan!
-Judul lagu [3]: Thinking Out Loud
-Lagu 'Thinking Out Loud' berhasil ditambahkan!
-Judul lagu [4]: 0  ← Ketik 0 untuk selesai
-
-Selesai menambahkan lagu.
-Total lagu untuk 'Ed Sheeran': 3
-```
-
-**Fitur:**
-- Input lagu terus berulang sampai user ketik `"0"`
-- Tidak ada batasan jumlah lagu per sesi
-- Array akan auto-expand jika penuh (5 → 10 → 20 → 40 → ...)
-
-#### 4. **Array Dinamis Auto-Expand** (Sudah Ada Sebelumnya)
-Array lagu menggunakan **dynamic resizing** seperti `std::vector`:
-
-**Mekanisme:**
-```
-Kapasitas Awal: 5
-Lagu ke-6 ditambah → Resize ke kapasitas 10
-Lagu ke-11 ditambah → Resize ke kapasitas 20
-Lagu ke-21 ditambah → Resize ke kapasitas 40
-... dan seterusnya (tidak ada batasan!)
-```
-
-**Implementasi:**
-```cpp
-if (P->jumlahLagu >= P->kapasitas) {
-    // Resize array (double the capacity)
-    int newKapasitas = P->kapasitas * 2;
+## ✅ PEMENUHAN SPESIFIKASI TUGAS BESAR MLL 1-N
     string* newArray = new string[newKapasitas];
     
     // Copy existing songs
@@ -139,201 +50,285 @@ if (P->jumlahLagu >= P->kapasitas) {
 
 ---
 
-## PEMENUHAN SPESIFIKASI TUGAS BESAR
+## ✅ PEMENUHAN SPESIFIKASI TUGAS BESAR MLL 1-N
 
-### SPESIFIKASI 1.a: Struktur Data MLL 1-N
+### **📌 SPESIFIKASI b. MLL 1-N**
 
-#### ✅ KRITERIA 1: Data pada Node Berupa Tipe Bentukan (Record)
-**Status: TERPENUHI**
+Berdasarkan ketentuan tugas besar, program harus memenuhi 3 kriteria:
 
-Program menggunakan `struct infoArtis` sebagai tipe bentukan (record) yang menyimpan informasi artis:
+---
 
+### **1️⃣ KRITERIA: List Parent dan Anak Tidak Boleh Sama**
+**✓ STATUS: TERPENUHI**
+
+#### **Kode Implementasi:**
+
+**Parent menggunakan LINKED LIST:**
 ```cpp
-struct infoArtis {    // Tipe bentukan (record)
-    string nama;      // Field 1: Nama artis
-    string genre;     // Field 2: Genre musik
-    int tahunDebut;   // Field 3: Tahun debut
+// File: katalog.h, Baris 35-37
+struct List {         // SPESIFIKASI 1.a: List parent
+    elmArtis* first;  // Pointer ke node pertama (LINKED LIST)
+};
+
+// File: katalog.h, Baris 27-33
+struct elmArtis {     // Node Linked List
+    infoArtis info;         
+    string* laguArray;      
+    int jumlahLagu;         
+    int kapasitas;          
+    struct elmArtis* next;  // POINTER next untuk LINKED LIST ✓
 };
 ```
 
-**Implementasi di Node:**
+**Child menggunakan ARRAY:**
 ```cpp
-struct elmArtis {
-    infoArtis info;         // Record yang menyimpan data artis
-    string* laguArray;      // Array untuk child
-    int jumlahLagu;
-    int kapasitas;
-    elmArtis* next;
+// File: katalog.h, Baris 29
+string* laguArray;      // ARRAY DINAMIS untuk child (BUKAN linked list) ✓
+```
+
+**Bukti Operasi Berbeda:**
+```cpp
+// PARENT (Linked List) - Traversal menggunakan POINTER
+// File: katalog.cpp, Baris 255-282
+void showAllData(List L) {
+    adrArtis P = L.first;
+    while (P != nullptr) {           // Traversal dengan POINTER ✓
+        // ... tampilkan data ...
+        P = P->next;                 // Pindah ke node berikutnya ✓
+    }
+}
+
+// CHILD (Array) - Akses menggunakan INDEX
+// File: katalog.cpp, Baris 272-275
+for (int i = 0; i < P->jumlahLagu; i++) {    // Loop dengan INDEX ✓
+    cout << P->laguArray[i] << endl;         // Akses dengan [i] ✓
+}
+```
+
+**✓ KESIMPULAN:**
+- **Parent (Artis)**: Linked List dengan pointer `next`
+- **Child (Lagu)**: Array dinamis dengan akses index `[i]`
+- **BERBEDA** ✓
+
+---
+
+### **2️⃣ KRITERIA: Data Elemen Parent Berupa Tipe Bentukan (Record)**
+**✓ STATUS: TERPENUHI**
+
+#### **Kode Implementasi:**
+
+**Definisi Record:**
+```cpp
+// File: katalog.h, Baris 21-25
+struct infoArtis {    // TIPE BENTUKAN (RECORD) ✓
+    string nama;      // Field 1
+    string genre;     // Field 2  
+    int tahunDebut;   // Field 3
 };
 ```
 
-**Bukti Penggunaan:**
+**Penggunaan Record di Parent:**
 ```cpp
-// File: katalog.cpp, baris 10-19
+// File: katalog.h, Baris 27-33
+struct elmArtis {     // Elemen Parent
+    infoArtis info;         // DATA PARENT = TIPE BENTUKAN ✓
+    string* laguArray;      // Child (array)
+    int jumlahLagu;         
+    int kapasitas;          
+    struct elmArtis* next;  
+};
+```
+
+**Bukti Akses Field Record:**
+```cpp
+// File: katalog.cpp, Baris 10-19
 adrArtis createElementArtis(const string &nama, const string &genre, int tahun) {
     adrArtis P = new elmArtis;
-    P->info.nama = nama;           // Akses field record
-    P->info.genre = genre;         // Akses field record
-    P->info.tahunDebut = tahun;    // Akses field record
+    P->info.nama = nama;           // Akses field record.nama ✓
+    P->info.genre = genre;         // Akses field record.genre ✓
+    P->info.tahunDebut = tahun;    // Akses field record.tahunDebut ✓
     P->laguArray = new string[5];
     P->jumlahLagu = 0;
     P->kapasitas = 5;
     P->next = nullptr;
     return P;
 }
+
+// File: katalog.cpp, Baris 267-269 (Tampil Data)
+cout << "  [" << counter << "] " << P->info.nama << endl;     // ✓
+cout << "      Genre: " << P->info.genre << endl;             // ✓
+cout << "      Debut: " << P->info.tahunDebut << endl;        // ✓
 ```
+
+**✓ KESIMPULAN:**
+- Data parent = `struct infoArtis` (record dengan 3 field)
+- Bukan tipe dasar, tapi **tipe bentukan** ✓
 
 ---
 
-#### ✅ KRITERIA 2: Satu Atribut Berupa Array Tipe Dasar
-**Status: TERPENUHI**
+### **3️⃣ KRITERIA: Data Elemen Child Berupa Tipe Dasar**
+**✓ STATUS: TERPENUHI**
 
-Program menggunakan **array dinamis tipe dasar `string`** untuk menyimpan lagu:
+#### **Kode Implementasi:**
 
+**Definisi Child sebagai Tipe Dasar:**
 ```cpp
-struct elmArtis {
-    infoArtis info;
-    string* laguArray;    // ARRAY TIPE DASAR (string*)
-    int jumlahLagu;       // Counter jumlah lagu
-    int kapasitas;        // Kapasitas maksimal array
-    elmArtis* next;
-};
+// File: katalog.h, Baris 29
+string* laguArray;      // ARRAY TIPE DASAR (string) ✓
 ```
 
-**Alokasi Dinamis Array:**
+**Alokasi Array Tipe Dasar:**
 ```cpp
-// File: katalog.cpp, baris 15
-P->laguArray = new string[5];  // Alokasi array tipe dasar dinamis
+// File: katalog.cpp, Baris 15
+P->laguArray = new string[5];  // Alokasi array TIPE DASAR ✓
 ```
 
-**Resize Array Otomatis:**
+**Insert Data ke Array Tipe Dasar:**
 ```cpp
-// File: katalog.cpp, baris 129-138
-void insertLagu(adrArtis P, const string &judul, List &L, const string &filename) {
-    if (P->jumlahLagu >= P->kapasitas) {
-        // Resize array jika penuh
-        int newCapacity = P->kapasitas * 2;
-        string* newArray = new string[newCapacity];
-        
-        for (int i = 0; i < P->jumlahLagu; i++) {
-            newArray[i] = P->laguArray[i];
-        }
-        
-        delete[] P->laguArray;
-        P->laguArray = newArray;
-        P->kapasitas = newCapacity;
+// File: katalog.cpp, Baris 151-152
+P->laguArray[P->jumlahLagu] = judul;  // Simpan string langsung ✓
+P->jumlahLagu++;
+```
+
+**Resize Array Tipe Dasar:**
+```cpp
+// File: katalog.cpp, Baris 136-148
+if (P->jumlahLagu >= P->kapasitas) {
+    int newKapasitas = P->kapasitas * 2;
+    string* newArray = new string[newKapasitas];  // Array TIPE DASAR ✓
+    
+    // Copy data
+    for (int i = 0; i < P->jumlahLagu; i++) {
+        newArray[i] = P->laguArray[i];  // Copy string langsung ✓
     }
     
-    P->laguArray[P->jumlahLagu] = judul;
-    P->jumlahLagu++;
+    delete[] P->laguArray;
+    P->laguArray = newArray;
+    P->kapasitas = newKapasitas;
 }
 ```
 
----
-
-#### ✅ KRITERIA 3: List Parent dan Child Tidak Boleh Sama
-**Status: TERPENUHI**
-
-**Parent (Artis):** Menggunakan **Linked List** dengan pointer `next`
-**Child (Lagu):** Menggunakan **Array Tipe Dasar** `string*`
-
+**Akses Data Array Tipe Dasar:**
 ```cpp
-struct List {
-    elmArtis* first;  // Parent: Linked List Artis
-};
-
-struct elmArtis {
-    infoArtis info;
-    string* laguArray;  // Child: ARRAY (bukan linked list)
-    int jumlahLagu;
-    int kapasitas;
-    elmArtis* next;     // Pointer untuk linked list parent
-};
-```
-
-**Perbedaan Struktur:**
-- **Parent (Artis):** Linked list dengan traversal menggunakan pointer `next`
-- **Child (Lagu):** Array dengan akses menggunakan index `[i]`
-
----
-
-### SPESIFIKASI 2.a: Fungsionalitas Dasar - CRUD + Search
-
-#### ✅ KRITERIA 1: CREATE (Tambah Data)
-**Status: TERPENUHI**
-
-**1. Create List:**
-```cpp
-// File: katalog.cpp, baris 25-27
-void createList(List &L) {
-    L.first = nullptr;  // Inisialisasi list kosong
+// File: katalog.cpp, Baris 272-275
+for (int i = 0; i < P->jumlahLagu; i++) {
+    cout << "        + " << P->laguArray[i] << endl;  // Akses string ✓
 }
 ```
 
-**2. Create Element Artis:**
+**✓ KESIMPULAN:**
+- Child = array tipe dasar `string`
+- Bukan record/struct, tapi **tipe dasar** ✓
+
+---
+
+### **📊 RINGKASAN PEMENUHAN SPESIFIKASI MLL 1-N**
+
+| **Kriteria** | **Implementasi** | **Lokasi Kode** | **Status** |
+|-------------|------------------|-----------------|------------|
+| **List parent ≠ child** | Parent: Linked List, Child: Array | katalog.h:27-37 | ✓ TERPENUHI |
+| **Data parent = tipe bentukan** | `struct infoArtis` (3 field) | katalog.h:21-25 | ✓ TERPENUHI |
+| **Data child = tipe dasar** | `string* laguArray` | katalog.h:29 | ✓ TERPENUHI |
+
+**✅ SEMUA SPESIFIKASI MLL 1-N TERPENUHI**
+
+---
+
+## 📌 FUNGSIONALITAS PROGRAM
+
+### **2. Fungsionalitas**
+
+---
+
+### **a. Dasar: CRUD + Search**
+
+#### **🔹 C - CREATE (Tambah Data)**
+**✓ STATUS: TERPENUHI**
+
+**1️⃣ CREATE Artis Baru:**
 ```cpp
-// File: katalog.cpp, baris 10-20
+// File: katalog.cpp, Baris 10-20
+// FUNCTION - return pointer artis baru
 adrArtis createElementArtis(const string &nama, const string &genre, int tahun) {
-    adrArtis P = new elmArtis;
-    P->info.nama = nama;
-    P->info.genre = genre;
-    P->info.tahunDebut = tahun;
-    P->laguArray = new string[5];
+    adrArtis P = new elmArtis;                    // Alokasi node MLL
+    P->info.nama = nama;                          // Set record field 1
+    P->info.genre = genre;                        // Set record field 2
+    P->info.tahunDebut = tahun;                   // Set record field 3
+    P->laguArray = new string[5];                 // Alokasi array tipe dasar
     P->jumlahLagu = 0;
     P->kapasitas = 5;
     P->next = nullptr;
     return P;
 }
-```
 
-**3. Insert Artis ke List:**
-```cpp
-// File: katalog.cpp, baris 29-44
+// File: katalog.cpp, Baris 30-44
+// PROCEDURE - tambah artis ke list
 void insertLastArtis(List &L, adrArtis P, const string &filename) {
     if (L.first == nullptr) {
-        L.first = P;
+        L.first = P;                              // Insert node pertama
     } else {
         adrArtis Q = L.first;
-        while (Q->next != nullptr) {
+        while (Q->next != nullptr) {              // Traversal ke akhir
             Q = Q->next;
         }
-        Q->next = P;
+        Q->next = P;                              // Insert di akhir
     }
-    cout << "  Artis '" << P->info.nama << "' ditambahkan" << endl;
+    cout << "  Artis berhasil ditambahkan!" << endl;
+    saveToCSV(L, filename);                       // Auto-save
+}
+```
+
+**2️⃣ CREATE Lagu ke Artis:**
+```cpp
+// File: katalog.cpp, Baris 131-158
+// PROCEDURE - tambah lagu ke array artis
+void insertLagu(adrArtis P, const string &judul, List &L, const string &filename) {
+    // Auto-resize jika array penuh
+    if (P->jumlahLagu >= P->kapasitas) {
+        int newKapasitas = P->kapasitas * 2;
+        string* newArray = new string[newKapasitas];
+        
+        for (int i = 0; i < P->jumlahLagu; i++) {
+            newArray[i] = P->laguArray[i];        // Copy existing
+        }
+        
+        delete[] P->laguArray;
+        P->laguArray = newArray;
+        P->kapasitas = newKapasitas;
+    }
+    
+    P->laguArray[P->jumlahLagu] = judul;          // Insert ke array
+    P->jumlahLagu++;
+    
+    cout << "  Lagu '" << judul << "' berhasil ditambahkan!" << endl;
     saveToCSV(L, filename);
 }
 ```
 
-**4. Insert Lagu ke Array:**
+**Implementasi di Main Program:**
 ```cpp
-// File: katalog.cpp, baris 127-149
-void insertLagu(adrArtis P, const string &judul, List &L, const string &filename) {
-    if (P->jumlahLagu >= P->kapasitas) {
-        int newCapacity = P->kapasitas * 2;
-        string* newArray = new string[newCapacity];
-        for (int i = 0; i < P->jumlahLagu; i++) {
-            newArray[i] = P->laguArray[i];
-        }
-        delete[] P->laguArray;
-        P->laguArray = newArray;
-        P->kapasitas = newCapacity;
-    }
-    P->laguArray[P->jumlahLagu] = judul;
-    P->jumlahLagu++;
-    saveToCSV(L, filename);
+// File: main.cpp, Baris 45-96
+case 1: {
+    // CREATE Artis Baru
+    nama = readString("  Nama artis: ");
+    genre = readString("  Genre: ");
+    tahun = readInteger("  Tahun debut: ");
+    
+    adrArtis newArtis = createElementArtis(nama, genre, tahun);  // CREATE
+    insertLastArtis(L, newArtis, filename);                      // INSERT
 }
 ```
 
 ---
 
-#### ✅ KRITERIA 2: READ (Tampilkan Data)
-**Status: TERPENUHI**
+#### **🔹 R - READ (Tampilkan Data)**
+**✓ STATUS: TERPENUHI**
 
-**Tampilkan Semua Data dengan Traversal:**
 ```cpp
-// File: katalog.cpp, baris 248-282
+// File: katalog.cpp, Baris 255-287
+// PROCEDURE - tampilkan semua data katalog
 void showAllData(List L) {
-    displayHeader("DATA KATALOG MUSIK");
+    displayHeader("*** DATA KATALOG MUSIK ***");
     
     if (L.first == nullptr) {
         cout << "\n  Tidak ada data artis." << endl;
@@ -344,75 +339,97 @@ void showAllData(List L) {
     int totalSongs = 0;
     
     adrArtis P = L.first;
-    while (P != nullptr) {  // Traversal linked list
+    while (P != nullptr) {                        // TRAVERSAL Linked List
         artistCount++;
         cout << "\n  [" << artistCount << "] " << P->info.nama << endl;
-        cout << "      Genre: " << P->info.genre << endl;
-        cout << "      Debut: " << P->info.tahunDebut << endl;
-        cout << "      Lagu: ";
-        
+        cout << "      Genre  : " << P->info.genre << endl;
+        cout << "      Debut  : " << P->info.tahunDebut << endl;
+        cout << "      Lagu   : ";
+
         if (P->jumlahLagu == 0) {
             cout << "(kosong)" << endl;
         } else {
-            cout << endl;
-            for (int i = 0; i < P->jumlahLagu; i++) {  // Traversal array
-                cout << "        + " << P->laguArray[i] << endl;
+            cout << "(" << P->jumlahLagu << " lagu)" << endl;
+            for (int i = 0; i < P->jumlahLagu; i++) {  // TRAVERSAL Array
+                cout << "         - " << P->laguArray[i] << endl;
                 totalSongs++;
             }
         }
-        cout << endl;
-        P = P->next;  // Pindah ke node berikutnya
+        P = P->next;                              // Pindah ke node berikutnya
     }
     
-    cout << "  Total: " << artistCount << " artis, " << totalSongs << " lagu" << endl;
+    cout << "\n  Total: " << artistCount << " artis, " << totalSongs << " lagu" << endl;
+}
+```
+
+**Implementasi di Main Program:**
+```cpp
+// File: main.cpp, Baris 172-176
+case 2: {
+    // READ - Tampil semua data
+    clearScreen();
+    showAllData(L);                              // READ operation
+    break;
 }
 ```
 
 ---
 
-#### ✅ KRITERIA 3: UPDATE (Ubah Data)
-**Status: TERPENUHI**
+#### **🔹 U - UPDATE (Ubah Data)**
+**✓ STATUS: TERPENUHI**
 
 ```cpp
-// File: katalog.cpp, baris 107-125
-void updateArtisInfo(List &L, const string &nama, const string &newGenre, 
-                     int newTahun, const string &filename) {
-    adrArtis P = searchArtis(L, nama);  // Cari artis dulu
+// File: katalog.cpp, Baris 109-124
+// PROCEDURE - update info artis
+void updateArtisInfo(List &L, const string &nama, const string &genreBaru, 
+                     int tahunBaru, const string &filename) {
+    adrArtis P = searchArtis(L, nama);            // SEARCH dulu
     
-    if (P == nullptr) {
-        cout << "  Artis tidak ditemukan" << endl;
-        return;
+    if (P != nullptr) {
+        P->info.genre = genreBaru;                // UPDATE field record
+        P->info.tahunDebut = tahunBaru;           // UPDATE field record
+        
+        cout << "  Info artis '" << nama << "' berhasil diupdate!" << endl;
+        
+        if (saveToCSV(L, filename)) {             // AUTO-SAVE
+            cout << "  Data disimpan ke " << filename << endl;
+        }
+    } else {
+        cout << "  Artis tidak ditemukan!" << endl;
     }
+}
+```
+
+**Implementasi di Main Program:**
+```cpp
+// File: main.cpp, Baris 268-275
+case 6: {
+    // UPDATE Info Artis
+    clearScreen();
+    displayHeader("UPDATE INFO ARTIS");
+    nama = readString(">> Nama Artis: ");
+    genre = readString(">> Genre Baru: ");
+    tahun = readInteger(">> Tahun Debut Baru: ");
     
-    // Simpan data lama untuk ditampilkan
-    string oldGenre = P->info.genre;
-    int oldTahun = P->info.tahunDebut;
-    
-    // Update data
-    P->info.genre = newGenre;
-    P->info.tahunDebut = newTahun;
-    
-    cout << "  Data artis '" << P->info.nama << "' berhasil diupdate" << endl;
-    cout << "  Genre: " << oldGenre << " -> " << newGenre << endl;
-    cout << "  Tahun: " << oldTahun << " -> " << newTahun << endl;
-    
-    saveToCSV(L, filename);
+    updateArtisInfo(L, nama, genre, tahun, filename);  // UPDATE operation
+    break;
 }
 ```
 
 ---
 
-#### ✅ KRITERIA 4: DELETE (Hapus Data)
-**Status: TERPENUHI**
+#### **🔹 D - DELETE (Hapus Data)**
+**✓ STATUS: TERPENUHI**
 
-**1. Delete Artis dari List:**
+**1️⃣ DELETE Artis:**
 ```cpp
-// File: katalog.cpp, baris 74-105
+// File: katalog.cpp, Baris 76-107
+// PROCEDURE - hapus artis dari list
 void deleteArtis(List &L, const string &nama, const string &filename) {
-    adrArtis P = searchArtis(L, nama);
+    adrArtis P = searchArtis(L, nama);            // SEARCH dulu
     
     if (P == nullptr) {
-        cout << "  Artis tidak ditemukan" << endl;
+        cout << "  Artis tidak ditemukan!" << endl;
         return;
     }
     
@@ -424,38 +441,47 @@ void deleteArtis(List &L, const string &nama, const string &filename) {
         current = current->next;
     }
     
-    // Hapus array lagu (dealokasi memori)
-    delete[] P->laguArray;
+    delete[] P->laguArray;                        // Dealokasi array child
     
     // Hapus artis dari list
     if (prev == nullptr) {
-        L.first = P->next;  // Hapus node pertama
+        L.first = P->next;                        // Hapus node pertama
     } else {
-        prev->next = P->next;  // Hapus node tengah/akhir
+        prev->next = P->next;                     // Hapus node tengah/akhir
     }
     
-    delete P;  // Dealokasi node
-    cout << "  Artis '" << nama << "' berhasil dihapus" << endl;
+    delete P;                                     // Dealokasi node
+    cout << "  Artis '" << nama << "' berhasil dihapus!" << endl;
     saveToCSV(L, filename);
 }
 ```
 
-**2. Delete Lagu dari Array:**
+**2️⃣ DELETE Lagu:**
 ```cpp
-// File: katalog.cpp, baris 151-179
+// File: katalog.cpp, Baris 160-195
+// PROCEDURE - hapus lagu dari array artis
 void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename) {
-    int index = -1;
+    if (P == nullptr || P->jumlahLagu == 0) {
+        cout << "  Lagu tidak ditemukan!" << endl;
+        return;
+    }
     
-    // Cari index lagu
+    // Cari index lagu (case-insensitive)
+    string judulLower = judul;
+    transform(judulLower.begin(), judulLower.end(), judulLower.begin(), ::tolower);
+    
+    int index = -1;
     for (int i = 0; i < P->jumlahLagu; i++) {
-        if (P->laguArray[i] == judul) {
+        string laguLower = P->laguArray[i];
+        transform(laguLower.begin(), laguLower.end(), laguLower.begin(), ::tolower);
+        if (laguLower == judulLower) {
             index = i;
             break;
         }
     }
     
     if (index == -1) {
-        cout << "  Lagu tidak ditemukan" << endl;
+        cout << "  Lagu tidak ditemukan!" << endl;
         return;
     }
     
@@ -465,19 +491,32 @@ void deleteLagu(adrArtis P, const string &judul, List &L, const string &filename
     }
     
     P->jumlahLagu--;
-    cout << "  Lagu '" << judul << "' berhasil dihapus" << endl;
+    cout << "  Lagu '" << judul << "' berhasil dihapus!" << endl;
     saveToCSV(L, filename);
+}
+```
+
+**Implementasi di Main Program:**
+```cpp
+// File: main.cpp, Baris 211-217
+case 2: {
+    // DELETE Artis
+    clearScreen();
+    displayHeader("HAPUS ARTIS");
+    nama = readString("  Nama Artis yang dihapus: ");
+    deleteArtis(L, nama, filename);              // DELETE operation
+    break;
 }
 ```
 
 ---
 
-#### ✅ KRITERIA 5: SEARCH (Pencarian Data)
-**Status: TERPENUHI**
+#### **🔍 SEARCH (Pencarian Data)**
+**✓ STATUS: TERPENUHI**
 
-**Case-Insensitive Search dengan Whitespace Trimming:**
 ```cpp
-// File: katalog.cpp, baris 47-72
+// File: katalog.cpp, Baris 47-73
+// FUNCTION - return pointer artis hasil pencarian
 adrArtis searchArtis(List L, const string &nama) {
     string namaLower = nama;
     
@@ -485,82 +524,113 @@ adrArtis searchArtis(List L, const string &nama) {
     namaLower.erase(namaLower.find_last_not_of(" \t\n\r\f\v") + 1);
     namaLower.erase(0, namaLower.find_first_not_of(" \t\n\r\f\v"));
     
-    // Convert to lowercase
+    // Convert to lowercase (CASE-INSENSITIVE)
     transform(namaLower.begin(), namaLower.end(), namaLower.begin(), ::tolower);
     
     adrArtis P = L.first;
-    while (P != nullptr) {  // Sequential search dengan traversal
+    while (P != nullptr) {                        // SEQUENTIAL SEARCH
         string storedName = P->info.nama;
         
-        // Trim whitespace
+        // Trim & lowercase
         storedName.erase(storedName.find_last_not_of(" \t\n\r\f\v") + 1);
         storedName.erase(0, storedName.find_first_not_of(" \t\n\r\f\v"));
-        
-        // Convert to lowercase
         transform(storedName.begin(), storedName.end(), storedName.begin(), ::tolower);
         
         if (storedName == namaLower) {
-            return P;  // Ditemukan
+            return P;                             // FOUND
         }
         P = P->next;
     }
-    return nullptr;  // Tidak ditemukan
+    return nullptr;                               // NOT FOUND
+}
+```
+
+**Implementasi di Main Program:**
+```cpp
+// File: main.cpp, Baris 237-258
+case 4: {
+    // SEARCH Artis
+    clearScreen();
+    displayHeader("CARI ARTIS");
+    nama = readString(">> Nama Artis: ");
+    pFound = searchArtis(L, nama);               // SEARCH operation
+    
+    if (pFound != nullptr) {
+        cout << "\n[DITEMUKAN]" << endl;
+        cout << "Nama       : " << pFound->info.nama << endl;
+        cout << "Genre      : " << pFound->info.genre << endl;
+        cout << "Tahun Debut: " << pFound->info.tahunDebut << endl;
+        cout << "Jumlah Lagu: " << pFound->jumlahLagu << endl;
+        
+        if (pFound->jumlahLagu > 0) {
+            cout << "\n>> Lagu-lagu:" << endl;
+            for (int i = 0; i < pFound->jumlahLagu; i++) {
+                cout << "  - " << (i + 1) << ". " << pFound->laguArray[i] << endl;
+            }
+        }
+    } else {
+        cout << "[X] Artis tidak ditemukan!" << endl;
+    }
+    break;
 }
 ```
 
 ---
 
-### SPESIFIKASI 2.b: Pengolahan MLL - Counting & Analisis
+### **b. Pengolahan MLL: Counting, dll.**
 
-#### ✅ KRITERIA: Operasi Counting
-**Status: TERPENUHI**
+#### **📊 COUNTING Operations**
+**✓ STATUS: TERPENUHI**
 
-**1. Count Total Artis:**
+**1️⃣ Count Total Artis:**
 ```cpp
-// File: katalog.cpp, baris 181-190
+// File: katalog.cpp, Baris 362-372
+// FUNCTION - return jumlah total artis
 int countTotalArtis(List L) {
     int count = 0;
     adrArtis P = L.first;
     
-    while (P != nullptr) {
-        count++;
+    while (P != nullptr) {                        // TRAVERSAL semua node
+        count++;                                  // INCREMENT counter
         P = P->next;
     }
     
-    return count;
+    return count;                                 // RETURN hasil counting
 }
 ```
 
-**2. Count Total Lagu:**
+**2️⃣ Count Total Lagu:**
 ```cpp
-// File: katalog.cpp, baris 192-201
+// File: katalog.cpp, Baris 351-361
+// FUNCTION - return jumlah total lagu
 int countTotalLagu(List L) {
-    int totalLagu = 0;
+    int total = 0;
     adrArtis P = L.first;
     
-    while (P != nullptr) {
-        totalLagu += P->jumlahLagu;  // Akumulasi jumlah lagu dari setiap artis
+    while (P != nullptr) {                        // TRAVERSAL semua artis
+        total += P->jumlahLagu;                   // AKUMULASI lagu per artis
         P = P->next;
     }
     
-    return totalLagu;
+    return total;                                 // RETURN total lagu
 }
 ```
 
-**3. Laporan Statistik:**
+**3️⃣ Laporan Statistik (Menggunakan Counting):**
 ```cpp
-// File: katalog.cpp, baris 297-322
+// File: katalog.cpp, Baris 317-342
+// PROCEDURE - tampilkan laporan statistik
 void showReport(List L) {
-    displayHeader("LAPORAN SISTEM KATALOG MUSIK");
+    displayHeader("*** LAPORAN SISTEM KATALOG MUSIK ***");
     
-    int totalArtis = countTotalArtis(L);  // Menggunakan counting
-    int totalLagu = countTotalLagu(L);    // Menggunakan counting
+    int totalArtis = countTotalArtis(L);          // COUNTING artis
+    int totalLagu = countTotalLagu(L);            // COUNTING lagu
     
-    cout << "\n  Statistik:" << endl;
-    cout << "  + Artis: " << totalArtis << endl;
-    cout << "  + Lagu: " << totalLagu << endl;
+    cout << "\n  STATISTIK GLOBAL" << endl;
+    cout << "  Total Artis: " << totalArtis << endl;
+    cout << "  Total Lagu : " << totalLagu << endl;
     
-    cout << "\n  Detail per artis:" << endl;
+    cout << "\n  DETAIL PER ARTIS" << endl;
     
     if (L.first == nullptr) {
         cout << "  (tidak ada data)" << endl;
@@ -569,7 +639,7 @@ void showReport(List L) {
         int counter = 1;
         while (P != nullptr) {
             cout << "  " << counter << ". " << P->info.nama 
-                 << " (" << P->jumlahLagu << " lagu)" << endl;
+                 << " (" << P->jumlahLagu << " lagu)" << endl;  // COUNTING per artis
             P = P->next;
             counter++;
         }
@@ -577,330 +647,88 @@ void showReport(List L) {
 }
 ```
 
----
-
-### FITUR TAMBAHAN
-
-#### ✅ Persistensi Data dengan CSV
-**Load dari CSV:**
+**Implementasi di Main Program:**
 ```cpp
-// File: katalog.cpp, baris 345-391
-bool loadFromCSV(const string &filename, List &L) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        return false;
-    }
-    
-    string line;
-    while (getline(file, line)) {
-        stringstream ss(line);
-        string nama, genre, tahunStr, judul;
-        
-        // Parse dengan delimiter semicolon
-        getline(ss, nama, ';');
-        getline(ss, genre, ';');
-        getline(ss, tahunStr, ';');
-        getline(ss, judul, ';');
-        
-        try {
-            int tahun = stoi(tahunStr);
-            
-            adrArtis P = searchArtis(L, nama);
-            if (P == nullptr) {
-                P = createElementArtis(nama, genre, tahun);
-                insertLastArtisNoSave(L, P);
-            }
-            
-            insertLaguNoSave(P, judul);
-        } catch (const exception& e) {
-            // Skip invalid lines
-        }
-    }
-    
-    file.close();
-    return true;
+// File: main.cpp, Baris 260-265
+case 5: {
+    // LAPORAN dengan COUNTING
+    clearScreen();
+    showReport(L);                               // Tampil statistik + counting
+    break;
 }
-```
 
-**Save ke CSV:**
-```cpp
-// File: katalog.cpp, baris 397-420
-bool saveToCSV(List L, const string &filename) {
-    ofstream file(filename);
-    if (!file.is_open()) {
-        return false;
-    }
-    
-    adrArtis P = L.first;
-    while (P != nullptr) {
-        if (P->jumlahLagu == 0) {
-            file << P->info.nama << ";" << P->info.genre << ";" 
-                 << P->info.tahunDebut << ";Belum Ada Lagu" << endl;
-        } else {
-            for (int i = 0; i < P->jumlahLagu; i++) {
-                file << P->info.nama << ";" << P->info.genre << ";" 
-                     << P->info.tahunDebut << ";" << P->laguArray[i] << endl;
-            }
-        }
-        P = P->next;
-    }
-    
-    file.close();
-    return true;
-}
-```
-
-#### ✅ Validasi Input dengan Loop
-```cpp
-// File: katalog.h, baris 107-121
-inline int readInteger(const string &prompt) {
-    int value;
-    bool valid = false;
-    
-    while (!valid) {
-        cout << prompt;
-        if (cin >> value) {
-            valid = true;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        } else {
-            cout << "  [ERROR] Input tidak valid! Masukkan angka yang benar." << endl;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-    }
-    return value;
-}
+// File: main.cpp, Baris 95
+cout << "  Total artis: " << countTotalArtis(L) << endl;  // Counting setelah insert
 ```
 
 ---
 
-## KESIMPULAN PEMENUHAN SPESIFIKASI
+### **📊 RINGKASAN PEMENUHAN FUNGSIONALITAS**
 
-### ✅ Semua Kriteria TERPENUHI:
+| **Fungsionalitas** | **Fungsi/Procedure** | **Lokasi Kode** | **Status** |
+|-------------------|---------------------|-----------------|------------|
+| **CREATE Artis** | `createElementArtis()`, `insertLastArtis()` | katalog.cpp:10, 30 | ✓ TERPENUHI |
+| **CREATE Lagu** | `insertLagu()` | katalog.cpp:131 | ✓ TERPENUHI |
+| **READ Data** | `showAllData()` | katalog.cpp:255 | ✓ TERPENUHI |
+| **UPDATE Artis** | `updateArtisInfo()` | katalog.cpp:109 | ✓ TERPENUHI |
+| **DELETE Artis** | `deleteArtis()` | katalog.cpp:76 | ✓ TERPENUHI |
+| **DELETE Lagu** | `deleteLagu()` | katalog.cpp:160 | ✓ TERPENUHI |
+| **SEARCH Artis** | `searchArtis()` (case-insensitive) | katalog.cpp:47 | ✓ TERPENUHI |
+| **COUNT Artis** | `countTotalArtis()` | katalog.cpp:362 | ✓ TERPENUHI |
+| **COUNT Lagu** | `countTotalLagu()` | katalog.cpp:351 | ✓ TERPENUHI |
+| **REPORT** | `showReport()` (dengan counting) | katalog.cpp:317 | ✓ TERPENUHI |
 
-1. **Spesifikasi 1.a - Struktur Data:**
-   - ✅ Data node berupa record (`infoArtis`)
-   - ✅ Array tipe dasar (`string* laguArray`)
-   - ✅ Parent (Linked List) ≠ Child (Array)
-
-2. **Spesifikasi 2.a - CRUD + Search:**
-   - ✅ CREATE: `createList`, `createElementArtis`, `insertLastArtis`, `insertLagu`
-   - ✅ READ: `showAllData` dengan traversal lengkap
-   - ✅ UPDATE: `updateArtisInfo`
-   - ✅ DELETE: `deleteArtis`, `deleteLagu`
-   - ✅ SEARCH: `searchArtis` dengan case-insensitive
-
-3. **Spesifikasi 2.b - Pengolahan MLL:**
-   - ✅ COUNTING: `countTotalArtis`, `countTotalLagu`
-   - ✅ ANALISIS: `showReport` dengan statistik
-
-4. **Fitur Tambahan:**
-   - ✅ Persistensi data CSV (load/save)
-   - ✅ Validasi input robust
-   - ✅ Memory management proper
-   - ✅ User-friendly interface
+**✅ SEMUA FUNGSIONALITAS TERPENUHI**
 
 ---
 
-## Struktur Data
+## �️ STRUKTUR FILE
 
-### Spesifikasi MLL 1-N
-Program menggunakan **Multi Linked List 1-N** dengan:
-- **Parent (Artis)**: Linked List dari node artis
-- **Child (Lagu)**: Array dinamis tipe dasar (string) untuk menyimpan lagu
-- **Record**: Tipe bentukan `infoArtis` yang menyimpan nama, genre, dan tahun debut
-
-### Definisi Struktur
-```cpp
-struct infoArtis {
-    string nama;
-    string genre; 
-    int tahunDebut;
-};
-
-struct elmArtis {
-    infoArtis info;           // Record (tipe bentukan)
-    string* laguArray;        // Array tipe dasar dinamis
-    int jumlahLagu;           // Jumlah lagu saat ini
-    int kapasitas;            // Kapasitas array
-    elmArtis* next;           // Pointer ke artis berikutnya
-};
-
-struct List {
-    elmArtis* first;          // Pointer ke artis pertama
-};
+```
+TUBES STRUKDAT CPP/
+├── katalog.h           # Header file (prototype & struct)
+├── katalog.cpp         # Implementasi fungsi
+├── main.cpp            # Program utama
+├── music_db.csv        # Database (auto-generated)
+├── README.md           # Dokumentasi ini
+└── CHEATSHEET.md       # Panduan singkat
 ```
 
-## Fitur Program
+---
 
-### CRUD Operations (Create, Read, Update, Delete)
-1. **[1] Tambah Artis Baru ke Katalog** - Menambahkan artis dengan informasi genre dan tahun debut
-2. **[2] Tambah Lagu ke Artis** - Menambahkan lagu ke dalam array lagu artis
-3. **[3] Lihat Semua Data Katalog** - Menampilkan seluruh data artis dan lagu
-4. **[4] Hapus Lagu dari Artis** - Menghapus lagu tertentu dari array lagu artis
-5. **[5] Hapus Artis dari Katalog** - Menghapus artis beserta semua lagunya
-6. **[8] Update Info Artis** - Mengubah informasi genre dan tahun debut artis
+## 🔧 CARA KOMPILASI & MENJALANKAN
 
-### Search Operations
-7. **[6] Cari Artis di Katalog** - Pencarian artis dengan nama (case-insensitive)
-
-### Reporting & Statistics
-8. **[7] Lihat Laporan Statistik** - Menampilkan:
-
-## Cara Kompilasi dan Menjalankan Program
-
-### Kompilasi:
+### **Kompilasi:**
 ```bash
-g++ -o katalog_musik.exe main.cpp katalog.cpp
+g++ -o katalog main.cpp katalog.cpp
 ```
 
-### Menjalankan:
+### **Menjalankan:**
 ```bash
-.\katalog_musik.exe
+./katalog
 ```
 
-### Catatan:
-- Pastikan compiler C++ (g++/MinGW) sudah terinstall
-- Program menggunakan C++ standard library
-- Database otomatis dibuat jika belum ada
+---
 
-## Database & Persistensi Data
+## 📝 FORMAT DATABASE (CSV)
 
-### Format File CSV
-- **Nama File**: `music_db.csv`
-- **Delimiter**: Semicolon (`;`)
-- **Format**: `NamaArtis;Genre;TahunDebut;JudulLagu`
-- **Auto-save**: Setiap operasi CRUD otomatis menyimpan ke database
+File `music_db.csv` menggunakan format:
+```
+nama;genre;tahun;judul_lagu
+```
 
-### Contoh Data CSV:
+**Contoh:**
 ```csv
 Taylor Swift;Pop;2006;Love Story
-Taylor Swift;Pop;2006;Shake It Off
-Ed Sheeran;Pop;2011;Perfect
-The Weeknd;R&B;2010;Blinding Lights
-```
-
-## Validasi Input
-
-Program memiliki validasi input yang robust:
-- **Input Integer**: Loop sampai mendapat angka yang valid
-- **Input String**: Tidak boleh kosong, otomatis trim whitespace
-- **Input Menu**: Validasi pilihan menu dengan error handling
-- **Error Message**: Pesan error yang jelas dan informatif
-
-## Struktur File Program
-
-```
-D:\Struktur Data\TUBES STRUKDAT CPP\
-├── katalog.h            # Header file dengan definisi struct dan prototype
-├── katalog.cpp          # Implementasi semua fungsi
-├── main.cpp             # Program utama dengan menu interface
-├── music_db.csv         # Database musik (CSV)
-├── katalog_musik.exe    # Executable program
-└── README.md            # Dokumentasi program
-```
-
-## Fungsi-Fungsi Utama
-
-### Operasi Artis
-- `createElementArtis()` - Membuat node artis baru
-- `insertLastArtis()` - Menambah artis ke akhir list
-- `searchArtis()` - Mencari artis (case-insensitive)
-- `deleteArtis()` - Menghapus artis dan semua lagunya
-- `updateArtisInfo()` - Update info genre dan tahun debut
-
-### Operasi Lagu
-- `insertLagu()` - Menambah lagu ke array artis
-- `deleteLagu()` - Menghapus lagu dari array artis
-- Array lagu menggunakan alokasi dinamis dengan resize otomatis
-
-### Operasi Tampilan
-- `showAllData()` - Menampilkan semua data katalog
-- `showReport()` - Menampilkan laporan statistik
-- `displayMenu()` - Menampilkan menu utama
-- `displayHeader()` - Menampilkan header dengan border
-
-### Operasi Database
-- `loadFromCSV()` - Membaca data dari file CSV
-- `saveToCSV()` - Menyimpan data ke file CSV
-- Auto-save setiap perubahan data
-
-### Operasi Counting
-- `countTotalArtis()` - Menghitung total artis
-- `countTotalLagu()` - Menghitung total lagu di semua artis
-
-## Fitur Pencarian
-
-### Smart Search
-- **Case Insensitive**: "taylor swift" = "Taylor Swift" = "TAYLOR SWIFT"
-- **Whitespace Trimming**: Menghapus spasi di awal dan akhir
-- **Sequential Search**: Traversal list untuk menemukan data
-
-## Error Handling
-
-Program dilengkapi dengan:
-- Validasi tipe data input (integer vs string)
-- Loop retry untuk input yang salah
-- Pesan error yang deskriptif
-- Handle file tidak ditemukan
-- Memory cleanup yang proper
-
-## Cara Penggunaan
-
-1. **Jalankan Program**: Eksekusi `katalog_musik.exe`
-2. **Auto-load**: Database otomatis dimuat dari CSV
-3. **Pilih Menu**: Masukkan nomor [0-8]
-4. **Input Data**: Ikuti instruksi untuk setiap operasi
-5. **Auto-save**: Perubahan otomatis tersimpan
-
-### Contoh Penggunaan:
-
-**Tambah Artis:**
-```
-[1] Tambah Artis Baru ke Katalog
-Nama: Taylor Swift
-Genre: Pop
-Tahun debut: 2006
-```
-
-**Tambah Lagu:**
-```
-[2] Tambah Lagu ke Artis  
-Nama artis: Taylor Swift
-Judul lagu: Love Story
-```
-
-**Lihat Data:**
-```
-[3] Lihat Semua Data Katalog
-Menampilkan semua artis dan lagu mereka
-```
-
-## Spesifikasi Teknis
-
-### Kompleksitas Algoritma
-- **Insert Artis**: O(n) - insert di akhir list
-- **Search Artis**: O(n) - sequential search
-- **Delete Artis**: O(n) - traversal untuk cari node
-- **Insert Lagu**: O(1) amortized - array dengan resize
-- **Delete Lagu**: O(n) - shift array setelah delete
-
-### Memory Management
-- Dynamic memory allocation untuk array lagu
-- Proper deallocation saat hapus artis
-- Resize array otomatis saat kapasitas penuh
-
-## Library yang Digunakan
-```cpp
-#include <iostream>     // I/O stream operations
-#include <fstream>      // File input/output
-#include <sstream>      // String stream parsing
-#include <string>       // String class dan operations
-#include <algorithm>    // Transform, manipulasi string
-#include <limits>       // Numeric limits untuk input validation
+Ed Sheeran;Pop;2011;Shape of You
+Coldplay;Rock;1998;Belum Ada Lagu
 ```
 
 ---
 
-**Dibuat untuk memenuhi Tugas Besar Struktur Data**
-**Implementasi: Multi Linked List 1-N dengan Array Dinamis**
+**✅ SEMUA SPESIFIKASI TUGAS BESAR TERPENUHI**
+
+---
+
+**Dibuat untuk memenuhi Tugas Besar Struktur Data**  
+**Implementasi: Multi Linked List 1-N dengan CRUD + Search + Counting**

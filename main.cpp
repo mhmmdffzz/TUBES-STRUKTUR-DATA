@@ -6,7 +6,7 @@ int main() {
     List L;                                       // SPESIFIKASI 1.a: Deklarasi MLL
     createList(L);                                // SPESIFIKASI 2.a: CREATE list
     
-    // ========== KONEKSI DATABASE (CSV FILE) ==========
+    //  KONEKSI DATABASE (CSV FILE) 
     string filename = "music_db.csv";             // DATABASE: Nama file CSV sebagai storage
     
     // DATABASE: Load/baca data dari CSV ke memory (MLL)
