@@ -9,48 +9,6 @@
 ---
 
 ## ✅ PEMENUHAN SPESIFIKASI TUGAS BESAR MLL 1-N
-    string* newArray = new string[newKapasitas];
-    
-    // Copy existing songs
-    for (int i = 0; i < P->jumlahLagu; i++) {
-        newArray[i] = P->laguArray[i];
-    }
-    
-    // Delete old array and update pointer
-    delete[] P->laguArray;
-    P->laguArray = newArray;
-    P->kapasitas = newKapasitas;
-}
-```
-
----
-
-### **PERBEDAAN VERSI LAMA vs BARU**
-
-| Aspek | Versi Lama | Versi Baru (2.0) |
-|-------|-----------|------------------|
-| **Menu Structure** | Flat menu (7 pilihan) | Nested menu (3 + sub-menu) |
-| **Tambah Artis & Lagu** | Satu menu gabungan | Terpisah di sub-menu |
-| **Hapus Data** | 2 menu terpisah | 1 menu dengan sub-menu |
-| **Input Lagu Pertama** | Wajib input atau skip manual | Logika khusus tanda "-" |
-| **Tambah Lagu ke Artis** | Input satu-satu, keluar & masuk lagi | Loop terus sampai ketik "0" |
-| **Jumlah Lagu per Sesi** | 1 lagu per eksekusi menu | Unlimited (sampai user ketik 0) |
-| **Kapasitas Array** | Fixed resize (sudah ada) | Fixed resize (tetap sama) |
-| **User Flow** | Kurang terorganisir | Lebih terstruktur & intuitif |
-
----
-
-### **KEUNTUNGAN UPDATE INI:**
-
-✅ **Organisasi Menu Lebih Baik**: Fitur serupa dikelompokkan dalam sub-menu  
-✅ **User Experience Lebih Smooth**: Bisa input banyak lagu tanpa keluar-masuk menu  
-✅ **Fleksibilitas Tinggi**: Artis bisa dibuat tanpa lagu (pakai "-")  
-✅ **Efisiensi Waktu**: Tidak perlu re-navigate menu berkali-kali  
-✅ **Konsistensi Kode**: Nested menu pattern yang sama untuk kelola & hapus data  
-
----
-
-## ✅ PEMENUHAN SPESIFIKASI TUGAS BESAR MLL 1-N
 
 ### **📌 SPESIFIKASI b. MLL 1-N**
 
